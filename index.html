@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>どうぶつ占い（個性学）60キャラ診断</title>
+<style>
+  :root{
+    --bg:#f6f5f1; --card:#ffffff; --ink:#23201b; --sub:#6f695f;
+    --line:#e7e3da; --accent:#c8a24b; --accent-ink:#7a5c14; --shadow:0 8px 30px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#1a1815; --card:#26231f; --ink:#f2ede3; --sub:#a9a293;
+      --line:#3a352e; --accent:#d8b866; --accent-ink:#f0dca0; --shadow:0 10px 34px rgba(0,0,0,.45); }
+  }
+  :root[data-theme="light"]{
+    --bg:#f6f5f1; --card:#ffffff; --ink:#23201b; --sub:#6f695f;
+    --line:#e7e3da; --accent:#c8a24b; --accent-ink:#7a5c14; --shadow:0 8px 30px rgba(0,0,0,.08);
+  }
+  :root[data-theme="dark"]{
+    --bg:#1a1815; --card:#26231f; --ink:#f2ede3; --sub:#a9a293;
+    --line:#3a352e; --accent:#d8b866; --accent-ink:#f0dca0; --shadow:0 10px 34px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,-apple-system,sans-serif;
+    line-height:1.7;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:640px;margin:0 auto;padding:32px 20px 64px;}
+  header{text-align:center;margin-bottom:28px}
+  h1{font-size:1.5rem;margin:0 0 6px;letter-spacing:.02em}
+  .lead{color:var(--sub);font-size:.9rem;margin:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    box-shadow:var(--shadow);padding:24px;}
+  .field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+  label{font-size:.85rem;color:var(--sub);font-weight:600}
+  input[type="date"]{font-size:1.05rem;padding:12px 14px;border-radius:12px;
+    border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%;}
+  button{width:100%;border:none;border-radius:12px;padding:14px;font-size:1.05rem;font-weight:700;
+    background:var(--accent);color:#241c00;cursor:pointer;transition:filter .15s;letter-spacing:.04em}
+  button:hover{filter:brightness(1.05)}
+  .result{margin-top:22px}
+  .badge-num{display:inline-flex;align-items:center;gap:8px;background:rgba(200,162,75,.15);
+    color:var(--accent-ink);border:1px solid var(--accent);border-radius:999px;
+    padding:5px 14px;font-weight:700;font-size:.85rem}
+  .hero{display:flex;align-items:center;gap:16px;margin:16px 0}
+  .emoji{font-size:3rem;line-height:1}
+  .chara{font-size:1.35rem;font-weight:800;margin:0}
+  .animal{color:var(--sub);font-size:.9rem;margin:2px 0 0}
+  .desc{white-space:pre-wrap;border-top:1px solid var(--line);padding-top:16px;margin-top:8px}
+  .pending{color:var(--sub);font-size:.9rem;background:rgba(120,120,120,.08);
+    border:1px dashed var(--line);border-radius:12px;padding:14px}
+  .note{font-size:.78rem;color:var(--sub);margin-top:26px;text-align:center;line-height:1.6}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>どうぶつ占い（個性学）診断</h1>
+    <p class="lead">生年月日から 12動物・60キャラを判定します</p>
+  </header>
+
+  <div class="card">
+    <div class="field">
+      <label for="dob">生年月日</label>
+      <input type="date" id="dob" min="1900-01-01" max="2100-12-31" value="1981-05-06">
+    </div>
+    <button id="go">診断する</button>
+
+    <div id="result" class="result hidden"></div>
+  </div>
+
+  <p class="note">
+    ※ 番号は日干支（60日周期）に基づき正確に算出しています。<br>
+    ※「どうぶつ占い」「個性学」は権利者の商標です。キャラ名・解説文は公式の許諾テキストに差し替えて使用してください。
+  </p>
+</div>
+
+<script>
+/* ============================================================
+   1〜60番号の算出（日干支＝60日周期の位置）
+   検証: 1981-05-06 → 21（落ち着きのあるペガサス）
+   ============================================================ */
+function jdn(y, m, d){
+  const a  = Math.floor((14 - m) / 12);
+  const yy = y + 4800 - a;
+  const mm = m + 12 * a - 3;
+  return d + Math.floor((153 * mm + 2) / 5) + 365 * yy
+       + Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
+}
+function animalNumber(y, m, d){
+  let n = ((jdn(y, m, d) % 60) + 50) % 60;   // オフセット50で公式番号に一致
+  return n === 0 ? 60 : n;
+}
+
+/* ============================================================
+   60キャラ換算データ（← ここに公式換算表を差し込む）
+   形式: 番号: { chara:"キャラ名", animal:"12動物名", emoji:"絵文字", desc:"解説文" }
+   ※現在は検証済みの #21 のみ登録。残りは公式データ待ち。
+   ============================================================ */
+const ANIMAL_EMOJI = {
+  "狼":"🐺","こじか":"🦌","猿":"🐒","チータ":"🐆","チーター":"🐆","黒ひょう":"🐆‍⬛",
+  "ライオン":"🦁","虎":"🐯","たぬき":"🦝","子守熊":"🐨","コアラ":"🐨","ゾウ":"🐘",
+  "ひつじ":"🐑","ペガサス":"🦄"
+};
+const DB = {
+  21: { chara:"落ち着きのあるペガサス", animal:"ペガサス",
+        desc:"（公式解説テキストに差し替えてください）マイペースで自由な発想を持つタイプ。" }
+  // 1〜60 の残りをここに追加していきます
+};
+
+function render(y, m, d){
+  const num = animalNumber(y, m, d);
+  const box = document.getElementById('result');
+  const rec = DB[num];
+  const emoji = rec ? (rec.emoji || ANIMAL_EMOJI[rec.animal] || "🐾") : "🐾";
+
+  let html = `<span class="badge-num">キャラ番号 <b>${num}</b> / 60</span>`;
+  if (rec){
+    html += `
+      <div class="hero">
+        <div class="emoji">${emoji}</div>
+        <div>
+          <p class="chara">${rec.chara}</p>
+          <p class="animal">動物：${rec.animal}</p>
+        </div>
+      </div>
+      <div class="desc">${rec.desc}</div>`;
+  } else {
+    html += `
+      <div class="hero">
+        <div class="emoji">🐾</div>
+        <div>
+          <p class="chara">番号 ${num}</p>
+          <p class="animal">動物・キャラ名は公式換算表の登録待ちです</p>
+        </div>
+      </div>
+      <div class="pending">この番号の「動物名・キャラ名・解説」を公式換算表から登録すると表示されます。</div>`;
+  }
+  box.innerHTML = html;
+  box.classList.remove('hidden');
+}
+
+document.getElementById('go').addEventListener('click', () => {
+  const v = document.getElementById('dob').value;
+  if (!v) return;
+  const [y, m, d] = v.split('-').map(Number);
+  render(y, m, d);
+});
+// 初期表示
+document.getElementById('go').click();
+</script>
+</body>
+</html>
