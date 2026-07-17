@@ -1,215 +1,259 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>どうぶつ占い（個性学）60キャラ診断</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>動物占い | 生年月日でわかるあなたの動物キャラ</title>
 <style>
   :root{
-    --bg:#f6f5f1; --card:#ffffff; --ink:#23201b; --sub:#6f695f;
-    --line:#e7e3da; --accent:#c8a24b; --accent-ink:#7a5c14; --shadow:0 8px 30px rgba(0,0,0,.08);
+    --bg1:#ffecd2; --bg2:#fcb69f; --card:#ffffff; --ink:#3a2e2a;
+    --sub:#8a7a72; --accent:#ff7a59; --accent2:#ffb347; --line:#f0e3da;
+    --shadow:0 18px 40px rgba(180,120,90,.22);
   }
-  @media (prefers-color-scheme: dark){
-    :root{ --bg:#1a1815; --card:#26231f; --ink:#f2ede3; --sub:#a9a293;
-      --line:#3a352e; --accent:#d8b866; --accent-ink:#f0dca0; --shadow:0 10px 34px rgba(0,0,0,.45); }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:24px 16px;
   }
-  :root[data-theme="light"]{
-    --bg:#f6f5f1; --card:#ffffff; --ink:#23201b; --sub:#6f695f;
-    --line:#e7e3da; --accent:#c8a24b; --accent-ink:#7a5c14; --shadow:0 8px 30px rgba(0,0,0,.08);
+  .wrap{width:100%;max-width:520px}
+  .card{
+    background:var(--card);border-radius:26px;box-shadow:var(--shadow);
+    overflow:hidden;
   }
-  :root[data-theme="dark"]{
-    --bg:#1a1815; --card:#26231f; --ink:#f2ede3; --sub:#a9a293;
-    --line:#3a352e; --accent:#d8b866; --accent-ink:#f0dca0; --shadow:0 10px 34px rgba(0,0,0,.45);
+  header{
+    text-align:center;padding:34px 24px 26px;
+    background:linear-gradient(135deg,#fff5ef,#ffe9df);
+    border-bottom:1px solid var(--line);
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);
-    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,-apple-system,sans-serif;
-    line-height:1.7;-webkit-font-smoothing:antialiased;}
-  .wrap{max-width:640px;margin:0 auto;padding:32px 20px 64px;}
-  header{text-align:center;margin-bottom:28px}
-  h1{font-size:1.5rem;margin:0 0 6px;letter-spacing:.02em}
-  .lead{color:var(--sub);font-size:.9rem;margin:0}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
-    box-shadow:var(--shadow);padding:24px;}
-  .field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-  label{font-size:.85rem;color:var(--sub);font-weight:600}
-  input[type="date"]{font-size:1.05rem;padding:12px 14px;border-radius:12px;
-    border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%;}
-  button{width:100%;border:none;border-radius:12px;padding:14px;font-size:1.05rem;font-weight:700;
-    background:var(--accent);color:#241c00;cursor:pointer;transition:filter .15s;letter-spacing:.04em}
-  button:hover{filter:brightness(1.05)}
-  .result{margin-top:22px}
-  .badge-num{display:inline-flex;align-items:center;gap:8px;background:rgba(200,162,75,.15);
-    color:var(--accent-ink);border:1px solid var(--accent);border-radius:999px;
-    padding:5px 14px;font-weight:700;font-size:.85rem}
-  .hero{display:flex;align-items:center;gap:16px;margin:16px 0}
-  .emoji{font-size:3rem;line-height:1}
-  .chara{font-size:1.35rem;font-weight:800;margin:0}
-  .animal{color:var(--sub);font-size:.9rem;margin:2px 0 0}
-  .desc{white-space:pre-wrap;border-top:1px solid var(--line);padding-top:16px;margin-top:8px}
-  .pending{color:var(--sub);font-size:.9rem;background:rgba(120,120,120,.08);
-    border:1px dashed var(--line);border-radius:12px;padding:14px}
-  .note{font-size:.78rem;color:var(--sub);margin-top:26px;text-align:center;line-height:1.6}
-  .hidden{display:none}
+  header .emoji{font-size:46px;line-height:1}
+  header h1{font-size:25px;margin:12px 0 6px;letter-spacing:.02em}
+  header p{color:var(--sub);font-size:13.5px;line-height:1.7}
+  .body{padding:26px 24px 30px}
+  label{display:block;font-size:13.5px;font-weight:700;margin-bottom:9px}
+  .date-row{display:flex;gap:10px}
+  select{
+    flex:1;padding:13px 10px;font-size:15px;border:1.5px solid var(--line);
+    border-radius:14px;background:#fffaf7;color:var(--ink);
+    appearance:none;-webkit-appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23bda' d='M1 1l5 5 5-5' stroke='%23c9a' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 12px center;
+  }
+  select:focus{outline:none;border-color:var(--accent2)}
+  .btn{
+    width:100%;margin-top:22px;padding:16px;border:none;border-radius:16px;
+    font-size:16px;font-weight:800;color:#fff;cursor:pointer;letter-spacing:.06em;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 10px 22px rgba(255,122,89,.38);transition:transform .12s,box-shadow .12s;
+  }
+  .btn:active{transform:translateY(2px);box-shadow:0 5px 12px rgba(255,122,89,.34)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+
+  #result{margin-top:26px;display:none;animation:pop .5s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+  .res-head{text-align:center;padding:26px 18px 20px;border-radius:22px;color:#fff;position:relative;overflow:hidden}
+  .res-head .an-emoji{font-size:74px;line-height:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.18))}
+  .res-head .an-num{font-size:12px;opacity:.9;margin-top:10px;letter-spacing:.14em}
+  .res-head .an-name{font-size:28px;font-weight:900;margin-top:4px;text-shadow:0 2px 6px rgba(0,0,0,.15)}
+  .res-head .an-catch{font-size:14px;margin-top:8px;opacity:.96;font-weight:600}
+
+  .keywords{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0}
+  .keywords span{
+    background:#fff3ec;color:var(--accent);font-size:12.5px;font-weight:700;
+    padding:6px 13px;border-radius:999px;border:1px solid #ffe0d3;
+  }
+  .section{margin-top:20px}
+  .section h3{
+    font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:7px;
+  }
+  .section h3::before{content:"";width:6px;height:18px;border-radius:3px;background:linear-gradient(var(--accent),var(--accent2))}
+  .section p{font-size:14px;line-height:1.85;color:#5a4b44}
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+  .fact{background:#fffaf6;border:1px solid var(--line);border-radius:16px;padding:14px}
+  .fact .k{font-size:11.5px;color:var(--sub);font-weight:700}
+  .fact .v{font-size:15.5px;font-weight:800;margin-top:4px}
+  .again{margin-top:20px;background:transparent;color:var(--accent);border:1.5px solid #ffd7c7;
+    border-radius:14px;padding:13px;width:100%;font-weight:800;font-size:14px;cursor:pointer}
+  .note{margin-top:18px;font-size:11px;color:var(--sub);text-align:center;line-height:1.7}
+  .err{color:#d9534f;font-size:13px;margin-top:12px;text-align:center;display:none}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>どうぶつ占い（個性学）診断</h1>
-    <p class="lead">生年月日から 12動物・60キャラを判定します</p>
-  </header>
-
   <div class="card">
-    <div class="field">
-      <label for="dob">生年月日</label>
-      <input type="date" id="dob" min="1900-01-01" max="2100-12-31" value="1981-05-06">
+    <header>
+      <div class="emoji">🐾</div>
+      <h1>動物占い</h1>
+      <p>生年月日を入れるだけ。<br>あなたの本当の性格を、12種類の動物キャラで診断します。</p>
+    </header>
+    <div class="body">
+      <label for="y">生年月日を選んでね</label>
+      <div class="date-row">
+        <select id="y" aria-label="年"></select>
+        <select id="m" aria-label="月"></select>
+        <select id="d" aria-label="日"></select>
+      </div>
+      <button class="btn" id="go">占う 🔮</button>
+      <div class="err" id="err">日付が正しくありません。もう一度選んでください。</div>
+
+      <div id="result"></div>
     </div>
-    <button id="go">診断する</button>
-
-    <div id="result" class="result hidden"></div>
   </div>
-
-  <p class="note">
-    ※ 番号は日干支（60日周期）に基づき正確に算出しています。<br>
-    ※「どうぶつ占い」「個性学」は権利者の商標です。キャラ名・解説文は公式の許諾テキストに差し替えて使用してください。
-  </p>
+  <p class="note">※ 生年月日の干支（60日周期）をもとにしたエンタメ診断です。</p>
 </div>
 
 <script>
-/* ============================================================
-   1〜60番号の算出（日干支＝60日周期の位置）
-   検証: 1981-05-06 → 21（落ち着きのあるペガサス）
-   ============================================================ */
-function jdn(y, m, d){
-  const a  = Math.floor((14 - m) / 12);
-  const yy = y + 4800 - a;
-  const mm = m + 12 * a - 3;
-  return d + Math.floor((153 * mm + 2) / 5) + 365 * yy
-       + Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
+// ===== 12種類の動物データ =====
+const ANIMALS = [
+  { name:"狼（オオカミ）", emoji:"🐺", color:"#5b6a8f",
+    catch:"ペースを崩さない一匹狼",
+    keys:["マイペース","こだわり","独創的"],
+    desc:"人に合わせるより、自分だけのリズムを大切にするタイプ。周囲に流されず、こだわりを貫く芯の強さがあります。一見クールですが、心を許した相手にはとても情が深いのが狼の魅力です。",
+    love:"束縛より、お互いの世界を尊重できる相手と長続きします。",
+    work:"独自の発想が活きる企画・専門職・クリエイティブ向き。",
+    lucky:"藍色", match:"虎・たぬき" },
+  { name:"こじか（子鹿）", emoji:"🦌", color:"#e29aa8",
+    catch:"純粋で好奇心いっぱい",
+    keys:["ピュア","好奇心","甘え上手"],
+    desc:"警戒心と好奇心が同居する、繊細で愛らしいタイプ。初対面では慎重ですが、打ち解けると一気に距離を縮めます。人の優しさを見抜く鋭さと、素直に甘えられる可愛げを持っています。",
+    love:"安心感をくれる包容力のある相手にときめきます。",
+    work:"人の役に立つ仕事、サポート・接客・医療系で輝きます。",
+    lucky:"桜ピンク", match:"ライオン・ゾウ" },
+  { name:"猿（サル）", emoji:"🐵", color:"#e8a33d",
+    catch:"天才肌の負けず嫌い",
+    keys:["器用","ノリ","向上心"],
+    desc:"頭の回転が速く、その場を盛り上げる天才。飽きっぽく見えて、実は誰よりも負けず嫌い。褒められると一気に伸びるタイプで、楽しみながら結果を出す才能があります。",
+    love:"一緒に笑える、テンポの合う相手と相性抜群。",
+    work:"変化の多い仕事、営業・企画・エンタメで才能開花。",
+    lucky:"オレンジ", match:"チーター・ペガサス" },
+  { name:"チーター", emoji:"🐆", color:"#f0862f",
+    catch:"直感で走り出すスプリンター",
+    keys:["行動力","直感","情熱"],
+    desc:"思い立ったら即行動。スタートダッシュの速さは12動物でNo.1です。熱しやすい分、飽きるのも早いですが、その勢いが周囲を巻き込む大きな力になります。夢に一直線な情熱家。",
+    love:"ドラマチックな恋を好む、恋の瞬発力タイプ。",
+    work:"スピード勝負の現場、起業・営業・イベント系が◎。",
+    lucky:"レッド", match:"猿・ライオン" },
+  { name:"黒ひょう（クロヒョウ）", emoji:"🐈‍⬛", color:"#4b4b57",
+    catch:"洗練されたトレンドリーダー",
+    keys:["おしゃれ","プライド","面倒見"],
+    desc:"センスと向上心にあふれ、新しいものにいち早く反応するおしゃれさん。プライドが高く見られがちですが、根は情に厚く、頼られると放っておけない親分肌の一面も持っています。",
+    love:"見た目もセンスも大事。刺激をくれる相手に惹かれます。",
+    work:"トレンドを扱う仕事、ファッション・広告・企画に強い。",
+    lucky:"モノトーン", match:"ひつじ・ゾウ" },
+  { name:"ライオン", emoji:"🦁", color:"#d99a2b",
+    catch:"堂々たる生まれながらのリーダー",
+    keys:["風格","責任感","完璧主義"],
+    desc:"存在感と責任感で人を引っ張るリーダータイプ。きちんとした立ち振る舞いを好み、頼られることでさらに輝きます。プライドの裏には、実は繊細で褒められたい可愛い一面も。",
+    love:"立ててくれる、尊敬し合える相手と幸せになれます。",
+    work:"組織を率いる管理職・リーダー・経営に適性あり。",
+    lucky:"ゴールド", match:"こじか・チーター" },
+  { name:"虎（トラ）", emoji:"🐯", color:"#e07b3a",
+    catch:"悠然と構える親分肌",
+    keys:["包容力","バランス","面倒見"],
+    desc:"どっしり構えて周囲を安心させる、頼れる存在。バランス感覚に優れ、困っている人を放っておけません。金銭にも堅実で、家族や仲間をしっかり守る大黒柱タイプです。",
+    love:"家庭的で温かい関係を築くのが得意。",
+    work:"人をまとめる仕事、マネジメント・後輩育成が得意。",
+    lucky:"深緑", match:"狼・子守熊" },
+  { name:"たぬき", emoji:"🦝", color:"#a9855f",
+    catch:"人に愛される世渡り上手",
+    keys:["愛嬌","経験値","安定感"],
+    desc:"角を立てず、誰とでも上手に付き合える愛されキャラ。経験を積むほど味が出るタイプで、年齢を重ねるごとに信頼が増していきます。おおらかさの中に、実は計算高い賢さも。",
+    love:"一緒にいて落ち着ける、家庭的な関係が理想。",
+    work:"信頼が武器になる接客・調整役・長く続ける仕事で活躍。",
+    lucky:"ベージュ", match:"狼・ペガサス" },
+  { name:"子守熊（コアラ）", emoji:"🐨", color:"#8aa2ad",
+    catch:"じっくり考えるロマンチスト",
+    keys:["思慮深い","ロマン","粘り強い"],
+    desc:"のんびりして見えて、内側には壮大な夢と計画を秘めた戦略家。納得するまでじっくり考え、一度決めたら粘り強くやり抜きます。癒し系の空気で、周囲をほっとさせる存在です。",
+    love:"ゆっくり距離を縮める、長期戦の恋が得意。",
+    work:"研究・分析・企画など、じっくり練る仕事に強い。",
+    lucky:"スカイブルー", match:"虎・ひつじ" },
+  { name:"ゾウ", emoji:"🐘", color:"#7d8ca3",
+    catch:"努力を惜しまない完璧主義者",
+    keys:["努力家","几帳面","職人肌"],
+    desc:"コツコツ努力を積み重ねる、真面目な頑張り屋。責任感が強く、任されたことは完璧にこなします。プライドを持って物事に取り組む職人気質で、周囲からの信頼はとても厚いです。",
+    love:"誠実で一途。信頼を大切に育てる恋を好みます。",
+    work:"専門性を極める職人・技術職・専門職で評価されます。",
+    lucky:"シルバー", match:"こじか・黒ひょう" },
+  { name:"ひつじ（羊）", emoji:"🐑", color:"#b0a58f",
+    catch:"情に厚い協調のまとめ役",
+    keys:["協調性","思いやり","仲間思い"],
+    desc:"仲間との調和を何より大切にする、優しい平和主義者。人の気持ちに敏感で、困っている人を見過ごせません。みんなでいる時間に幸せを感じ、場をまあるくつなぐ潤滑油のような存在。",
+    love:"寂しがりやで一途。いつも一緒にいたいタイプ。",
+    work:"チームワークが活きる仕事、調整役・サポートで輝く。",
+    lucky:"アイボリー", match:"子守熊・黒ひょう" },
+  { name:"ペガサス", emoji:"🦄", color:"#9b7fd4",
+    catch:"常識を超える自由な天才",
+    keys:["自由","感性","天才肌"],
+    desc:"型にはまらない発想と、豊かな感性で周囲を驚かせる自由人。気分の波はありますが、ノッたときの爆発力は誰にも真似できません。褒められて伸びる、唯一無二のアイデアマンです。",
+    love:"自由を尊重してくれる、感性の合う相手に夢中に。",
+    work:"感性で勝負するクリエイター・アート・企画職が天職。",
+    lucky:"パープル", match:"猿・たぬき" },
+];
+
+// ===== 日付 → 干支(60周期)番号 → 動物 =====
+function toJDN(y,m,d){
+  const a=Math.floor((14-m)/12), y2=y+4800-a, m2=m+12*a-3;
+  return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;
 }
-function animalNumber(y, m, d){
-  let n = ((jdn(y, m, d) % 60) + 50) % 60;   // オフセット50で公式番号に一致
-  return n === 0 ? 60 : n;
+function diagnose(y,m,d){
+  const num=(((toJDN(y,m,d)+49)%60)+60)%60+1; // 1..60
+  const animal=ANIMALS[Math.floor((num-1)/5)];
+  return {num, animal};
 }
 
-/* ============================================================
-   60キャラ換算データ（← ここに公式換算表を差し込む）
-   形式: 番号: { chara:"キャラ名", animal:"12動物名", emoji:"絵文字", desc:"解説文" }
-   ※現在は検証済みの #21 のみ登録。残りは公式データ待ち。
-   ============================================================ */
-const ANIMAL_EMOJI = {
-  "狼":"🐺","こじか":"🦌","猿":"🐒","チータ":"🐆","黒ひょう":"🐆‍⬛",
-  "ライオン":"🦁","虎":"🐯","たぬき":"🦝","子守熊":"🐨","ゾウ":"🐘",
-  "ひつじ":"🐑","ペガサス":"🦄"
-};
-/* 12動物の一般的な傾向（当方作成の暫定文。公式の許諾テキストに差し替え可） */
-const ANIMAL_DESC = {
-  "狼":"独自のペースと世界観を大切にする一匹狼タイプ。干渉を嫌い、こだわりを貫く。",
-  "こじか":"警戒心と甘えたい気持ちを併せ持つ、繊細でピュアなタイプ。",
-  "猿":"好奇心旺盛で頭の回転が速く、その場を明るくする器用なタイプ。",
-  "チータ":"目標に一直線。瞬発力と行動力で駆け抜ける情熱家タイプ。",
-  "黒ひょう":"新しいもの好きでプライドが高く、面倒見のよいスマートなタイプ。",
-  "ライオン":"堂々としたリーダー気質。頼られると力を発揮する自信家タイプ。",
-  "虎":"おおらかで面倒見がよく、バランス感覚に優れた安定タイプ。",
-  "たぬき":"経験を武器にする老練さと人当たりのよさを持つ、愛されタイプ。",
-  "子守熊":"じっくり考え、こだわりを貫く、母性と粘り強さのタイプ。",
-  "ゾウ":"努力家で完璧主義。まっすぐ突き進む頼れるタイプ。",
-  "ひつじ":"協調性と情の深さを持ち、仲間思いで安心を求めるタイプ。",
-  "ペガサス":"自由な発想と気まぐれな魅力を持つ、天才肌のタイプ。"
-};
-/* 60キャラ換算表（番号 → キャラ名 / 12動物） */
-const DB = {
-  1:{chara:"長距離ランナーのチータ",animal:"チータ"},
-  2:{chara:"社交家のたぬき",animal:"たぬき"},
-  3:{chara:"落ち着きのない猿",animal:"猿"},
-  4:{chara:"フットワークの軽い子守熊",animal:"子守熊"},
-  5:{chara:"面倒見のいい黒ひょう",animal:"黒ひょう"},
-  6:{chara:"愛情あふれる虎",animal:"虎"},
-  7:{chara:"全力疾走するチータ",animal:"チータ"},
-  8:{chara:"磨き上げられたたぬき",animal:"たぬき"},
-  9:{chara:"大きな志をもった猿",animal:"猿"},
-  10:{chara:"母性豊かな子守熊",animal:"子守熊"},
-  11:{chara:"正直なこじか",animal:"こじか"},
-  12:{chara:"人気者のゾウ",animal:"ゾウ"},
-  13:{chara:"ネアカの狼",animal:"狼"},
-  14:{chara:"協調性のないひつじ",animal:"ひつじ"},
-  15:{chara:"どっしりとした猿",animal:"猿"},
-  16:{chara:"コアラのなかの子守熊",animal:"子守熊"},
-  17:{chara:"強い意志をもったこじか",animal:"こじか"},
-  18:{chara:"デリケートなゾウ",animal:"ゾウ"},
-  19:{chara:"放浪の狼",animal:"狼"},
-  20:{chara:"物静かなひつじ",animal:"ひつじ"},
-  21:{chara:"落ち着きのあるペガサス",animal:"ペガサス"},
-  22:{chara:"強靭な翼をもつペガサス",animal:"ペガサス"},
-  23:{chara:"無邪気なひつじ",animal:"ひつじ"},
-  24:{chara:"クリエイティブな狼",animal:"狼"},
-  25:{chara:"穏やかな狼",animal:"狼"},
-  26:{chara:"粘り強いひつじ",animal:"ひつじ"},
-  27:{chara:"波乱に満ちたペガサス",animal:"ペガサス"},
-  28:{chara:"優雅なペガサス",animal:"ペガサス"},
-  29:{chara:"チャレンジ精神旺盛なひつじ",animal:"ひつじ"},
-  30:{chara:"順応性のある狼",animal:"狼"},
-  31:{chara:"リーダーとなるゾウ",animal:"ゾウ"},
-  32:{chara:"しっかり者のこじか",animal:"こじか"},
-  33:{chara:"活動的な子守熊",animal:"子守熊"},
-  34:{chara:"気分屋の猿",animal:"猿"},
-  35:{chara:"頼られると嬉しいひつじ",animal:"ひつじ"},
-  36:{chara:"好感のもたれる狼",animal:"狼"},
-  37:{chara:"まっしぐらに突き進むゾウ",animal:"ゾウ"},
-  38:{chara:"華やかなこじか",animal:"こじか"},
-  39:{chara:"夢とロマンの子守熊",animal:"子守熊"},
-  40:{chara:"尽くす猿",animal:"猿"},
-  41:{chara:"大器晩成のたぬき",animal:"たぬき"},
-  42:{chara:"足腰の強いチータ",animal:"チータ"},
-  43:{chara:"動きまわる虎",animal:"虎"},
-  44:{chara:"情熱的な黒ひょう",animal:"黒ひょう"},
-  45:{chara:"サービス精神旺盛な子守熊",animal:"子守熊"},
-  46:{chara:"守りの猿",animal:"猿"},
-  47:{chara:"人間味あふれるたぬき",animal:"たぬき"},
-  48:{chara:"品格のあるチータ",animal:"チータ"},
-  49:{chara:"ゆったりとした悠然の虎",animal:"虎"},
-  50:{chara:"落ち込みの激しい黒ひょう",animal:"黒ひょう"},
-  51:{chara:"我が道を行くライオン",animal:"ライオン"},
-  52:{chara:"統率力のあるライオン",animal:"ライオン"},
-  53:{chara:"感情豊かな黒ひょう",animal:"黒ひょう"},
-  54:{chara:"楽天的な虎",animal:"虎"},
-  55:{chara:"パワフルな虎",animal:"虎"},
-  56:{chara:"気どらない黒ひょう",animal:"黒ひょう"},
-  57:{chara:"感情的なライオン",animal:"ライオン"},
-  58:{chara:"傷つきやすいライオン",animal:"ライオン"},
-  59:{chara:"束縛を嫌う黒ひょう",animal:"黒ひょう"},
-  60:{chara:"慈悲深い虎",animal:"虎"}
-};
+// ===== セレクト初期化 =====
+const yS=document.getElementById('y'), mS=document.getElementById('m'), dS=document.getElementById('d');
+const nowY=new Date().getFullYear();
+for(let y=nowY;y>=1926;y--) yS.add(new Option(y+'年',y));
+for(let m=1;m<=12;m++) mS.add(new Option(m+'月',m));
+function fillDays(){
+  const y=+yS.value, m=+mS.value, keep=+dS.value;
+  const last=new Date(y,m,0).getDate();
+  dS.innerHTML='';
+  for(let d=1;d<=last;d++) dS.add(new Option(d+'日',d));
+  if(keep&&keep<=last) dS.value=keep;
+}
+yS.value=1995; mS.value=1; fillDays();
+yS.onchange=fillDays; mS.onchange=fillDays;
 
-function render(y, m, d){
-  const num = animalNumber(y, m, d);
-  const box = document.getElementById('result');
-  const rec = DB[num];
-  const emoji = ANIMAL_EMOJI[rec.animal] || "🐾";
-  const blurb = ANIMAL_DESC[rec.animal] || "";
-
-  box.innerHTML = `
-    <span class="badge-num">キャラ番号 <b>${num}</b> / 60</span>
-    <div class="hero">
-      <div class="emoji">${emoji}</div>
-      <div>
-        <p class="chara">${rec.chara}</p>
-        <p class="animal">動物：${rec.animal}</p>
-      </div>
+// ===== 占う =====
+document.getElementById('go').onclick=()=>{
+  const y=+yS.value,m=+mS.value,d=+dS.value;
+  const err=document.getElementById('err');
+  if(!(y&&m&&d)){err.style.display='block';return;}
+  err.style.display='none';
+  const {num,animal}=diagnose(y,m,d);
+  const box=document.getElementById('result');
+  box.innerHTML=`
+    <div class="res-head" style="background:linear-gradient(135deg,${animal.color},${shade(animal.color)})">
+      <div class="an-emoji">${animal.emoji}</div>
+      <div class="an-num">あなたの動物キャラ ・ No.${num}/60</div>
+      <div class="an-name">${animal.name}</div>
+      <div class="an-catch">${animal.catch}</div>
     </div>
-    <div class="desc">${blurb}<br><span style="color:var(--sub);font-size:.8rem">※個別の詳しい解説は、公式の許諾テキストに差し替えてご利用ください。</span></div>`;
-  box.classList.remove('hidden');
+    <div class="keywords">${animal.keys.map(k=>`<span>#${k}</span>`).join('')}</div>
+    <div class="section"><h3>性格</h3><p>${animal.desc}</p></div>
+    <div class="section"><h3>恋愛</h3><p>${animal.love}</p></div>
+    <div class="section"><h3>仕事</h3><p>${animal.work}</p></div>
+    <div class="facts">
+      <div class="fact"><div class="k">ラッキーカラー</div><div class="v">${animal.lucky}</div></div>
+      <div class="fact"><div class="k">相性のいい動物</div><div class="v">${animal.match}</div></div>
+    </div>
+    <button class="again" id="again">もう一度占う 🔄</button>`;
+  box.style.display='block';
+  document.getElementById('again').onclick=()=>{box.style.display='none';window.scrollTo({top:0,behavior:'smooth'});};
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+};
+function shade(hex){
+  const n=parseInt(hex.slice(1),16);
+  let r=(n>>16)-28,g=((n>>8)&255)-28,b=(n&255)-28;
+  r=Math.max(0,r);g=Math.max(0,g);b=Math.max(0,b);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
 }
-
-document.getElementById('go').addEventListener('click', () => {
-  const v = document.getElementById('dob').value;
-  if (!v) return;
-  const [y, m, d] = v.split('-').map(Number);
-  render(y, m, d);
-});
-// 初期表示
-document.getElementById('go').click();
 </script>
 </body>
 </html>
