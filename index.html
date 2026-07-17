@@ -99,45 +99,106 @@ function animalNumber(y, m, d){
    ※現在は検証済みの #21 のみ登録。残りは公式データ待ち。
    ============================================================ */
 const ANIMAL_EMOJI = {
-  "狼":"🐺","こじか":"🦌","猿":"🐒","チータ":"🐆","チーター":"🐆","黒ひょう":"🐆‍⬛",
-  "ライオン":"🦁","虎":"🐯","たぬき":"🦝","子守熊":"🐨","コアラ":"🐨","ゾウ":"🐘",
+  "狼":"🐺","こじか":"🦌","猿":"🐒","チータ":"🐆","黒ひょう":"🐆‍⬛",
+  "ライオン":"🦁","虎":"🐯","たぬき":"🦝","子守熊":"🐨","ゾウ":"🐘",
   "ひつじ":"🐑","ペガサス":"🦄"
 };
+/* 12動物の一般的な傾向（当方作成の暫定文。公式の許諾テキストに差し替え可） */
+const ANIMAL_DESC = {
+  "狼":"独自のペースと世界観を大切にする一匹狼タイプ。干渉を嫌い、こだわりを貫く。",
+  "こじか":"警戒心と甘えたい気持ちを併せ持つ、繊細でピュアなタイプ。",
+  "猿":"好奇心旺盛で頭の回転が速く、その場を明るくする器用なタイプ。",
+  "チータ":"目標に一直線。瞬発力と行動力で駆け抜ける情熱家タイプ。",
+  "黒ひょう":"新しいもの好きでプライドが高く、面倒見のよいスマートなタイプ。",
+  "ライオン":"堂々としたリーダー気質。頼られると力を発揮する自信家タイプ。",
+  "虎":"おおらかで面倒見がよく、バランス感覚に優れた安定タイプ。",
+  "たぬき":"経験を武器にする老練さと人当たりのよさを持つ、愛されタイプ。",
+  "子守熊":"じっくり考え、こだわりを貫く、母性と粘り強さのタイプ。",
+  "ゾウ":"努力家で完璧主義。まっすぐ突き進む頼れるタイプ。",
+  "ひつじ":"協調性と情の深さを持ち、仲間思いで安心を求めるタイプ。",
+  "ペガサス":"自由な発想と気まぐれな魅力を持つ、天才肌のタイプ。"
+};
+/* 60キャラ換算表（番号 → キャラ名 / 12動物） */
 const DB = {
-  21: { chara:"落ち着きのあるペガサス", animal:"ペガサス",
-        desc:"（公式解説テキストに差し替えてください）マイペースで自由な発想を持つタイプ。" }
-  // 1〜60 の残りをここに追加していきます
+  1:{chara:"長距離ランナーのチータ",animal:"チータ"},
+  2:{chara:"社交家のたぬき",animal:"たぬき"},
+  3:{chara:"落ち着きのない猿",animal:"猿"},
+  4:{chara:"フットワークの軽い子守熊",animal:"子守熊"},
+  5:{chara:"面倒見のいい黒ひょう",animal:"黒ひょう"},
+  6:{chara:"愛情あふれる虎",animal:"虎"},
+  7:{chara:"全力疾走するチータ",animal:"チータ"},
+  8:{chara:"磨き上げられたたぬき",animal:"たぬき"},
+  9:{chara:"大きな志をもった猿",animal:"猿"},
+  10:{chara:"母性豊かな子守熊",animal:"子守熊"},
+  11:{chara:"正直なこじか",animal:"こじか"},
+  12:{chara:"人気者のゾウ",animal:"ゾウ"},
+  13:{chara:"ネアカの狼",animal:"狼"},
+  14:{chara:"協調性のないひつじ",animal:"ひつじ"},
+  15:{chara:"どっしりとした猿",animal:"猿"},
+  16:{chara:"コアラのなかの子守熊",animal:"子守熊"},
+  17:{chara:"強い意志をもったこじか",animal:"こじか"},
+  18:{chara:"デリケートなゾウ",animal:"ゾウ"},
+  19:{chara:"放浪の狼",animal:"狼"},
+  20:{chara:"物静かなひつじ",animal:"ひつじ"},
+  21:{chara:"落ち着きのあるペガサス",animal:"ペガサス"},
+  22:{chara:"強靭な翼をもつペガサス",animal:"ペガサス"},
+  23:{chara:"無邪気なひつじ",animal:"ひつじ"},
+  24:{chara:"クリエイティブな狼",animal:"狼"},
+  25:{chara:"穏やかな狼",animal:"狼"},
+  26:{chara:"粘り強いひつじ",animal:"ひつじ"},
+  27:{chara:"波乱に満ちたペガサス",animal:"ペガサス"},
+  28:{chara:"優雅なペガサス",animal:"ペガサス"},
+  29:{chara:"チャレンジ精神旺盛なひつじ",animal:"ひつじ"},
+  30:{chara:"順応性のある狼",animal:"狼"},
+  31:{chara:"リーダーとなるゾウ",animal:"ゾウ"},
+  32:{chara:"しっかり者のこじか",animal:"こじか"},
+  33:{chara:"活動的な子守熊",animal:"子守熊"},
+  34:{chara:"気分屋の猿",animal:"猿"},
+  35:{chara:"頼られると嬉しいひつじ",animal:"ひつじ"},
+  36:{chara:"好感のもたれる狼",animal:"狼"},
+  37:{chara:"まっしぐらに突き進むゾウ",animal:"ゾウ"},
+  38:{chara:"華やかなこじか",animal:"こじか"},
+  39:{chara:"夢とロマンの子守熊",animal:"子守熊"},
+  40:{chara:"尽くす猿",animal:"猿"},
+  41:{chara:"大器晩成のたぬき",animal:"たぬき"},
+  42:{chara:"足腰の強いチータ",animal:"チータ"},
+  43:{chara:"動きまわる虎",animal:"虎"},
+  44:{chara:"情熱的な黒ひょう",animal:"黒ひょう"},
+  45:{chara:"サービス精神旺盛な子守熊",animal:"子守熊"},
+  46:{chara:"守りの猿",animal:"猿"},
+  47:{chara:"人間味あふれるたぬき",animal:"たぬき"},
+  48:{chara:"品格のあるチータ",animal:"チータ"},
+  49:{chara:"ゆったりとした悠然の虎",animal:"虎"},
+  50:{chara:"落ち込みの激しい黒ひょう",animal:"黒ひょう"},
+  51:{chara:"我が道を行くライオン",animal:"ライオン"},
+  52:{chara:"統率力のあるライオン",animal:"ライオン"},
+  53:{chara:"感情豊かな黒ひょう",animal:"黒ひょう"},
+  54:{chara:"楽天的な虎",animal:"虎"},
+  55:{chara:"パワフルな虎",animal:"虎"},
+  56:{chara:"気どらない黒ひょう",animal:"黒ひょう"},
+  57:{chara:"感情的なライオン",animal:"ライオン"},
+  58:{chara:"傷つきやすいライオン",animal:"ライオン"},
+  59:{chara:"束縛を嫌う黒ひょう",animal:"黒ひょう"},
+  60:{chara:"慈悲深い虎",animal:"虎"}
 };
 
 function render(y, m, d){
   const num = animalNumber(y, m, d);
   const box = document.getElementById('result');
   const rec = DB[num];
-  const emoji = rec ? (rec.emoji || ANIMAL_EMOJI[rec.animal] || "🐾") : "🐾";
+  const emoji = ANIMAL_EMOJI[rec.animal] || "🐾";
+  const blurb = ANIMAL_DESC[rec.animal] || "";
 
-  let html = `<span class="badge-num">キャラ番号 <b>${num}</b> / 60</span>`;
-  if (rec){
-    html += `
-      <div class="hero">
-        <div class="emoji">${emoji}</div>
-        <div>
-          <p class="chara">${rec.chara}</p>
-          <p class="animal">動物：${rec.animal}</p>
-        </div>
+  box.innerHTML = `
+    <span class="badge-num">キャラ番号 <b>${num}</b> / 60</span>
+    <div class="hero">
+      <div class="emoji">${emoji}</div>
+      <div>
+        <p class="chara">${rec.chara}</p>
+        <p class="animal">動物：${rec.animal}</p>
       </div>
-      <div class="desc">${rec.desc}</div>`;
-  } else {
-    html += `
-      <div class="hero">
-        <div class="emoji">🐾</div>
-        <div>
-          <p class="chara">番号 ${num}</p>
-          <p class="animal">動物・キャラ名は公式換算表の登録待ちです</p>
-        </div>
-      </div>
-      <div class="pending">この番号の「動物名・キャラ名・解説」を公式換算表から登録すると表示されます。</div>`;
-  }
-  box.innerHTML = html;
+    </div>
+    <div class="desc">${blurb}<br><span style="color:var(--sub);font-size:.8rem">※個別の詳しい解説は、公式の許諾テキストに差し替えてご利用ください。</span></div>`;
   box.classList.remove('hidden');
 }
 
