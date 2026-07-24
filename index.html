@@ -92,6 +92,18 @@
   .grow .bar{flex:1;height:11px;border-radius:6px;background:#f0e3da;overflow:hidden}
   .grow .bar i{display:block;height:100%;border-radius:6px}
   .grow .gv{width:16px;font-size:11px;color:var(--sub);text-align:right}
+  .grow .gk{flex:none;font-size:10.5px;color:var(--sub);white-space:nowrap;margin-left:6px}
+  .glossary{margin-top:22px;background:#fffaf6;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .glossary summary{padding:14px 16px;font-size:14px;font-weight:800;color:var(--accent);cursor:pointer;list-style:none}
+  .glossary summary::-webkit-details-marker{display:none}
+  .glossary summary::after{content:"▾";float:right;transition:transform .2s}
+  .glossary[open] summary::after{transform:rotate(180deg)}
+  .gbody{padding:2px 16px 16px}
+  .gsec{margin-top:14px}
+  .gsec h5{font-size:13px;margin-bottom:4px;color:var(--ink)}
+  .gsec p{font-size:12.5px;line-height:1.7;color:#5a4b44}
+  .gsec ul{margin:6px 0 0;padding-left:18px}
+  .gsec li{font-size:12.5px;line-height:1.8;color:#5a4b44}
   .perso{margin-top:14px}
   .perso .lbl,.daiun .lbl{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:3px}
   .perso p{font-size:13.5px;line-height:1.8;color:#5a4b44}
@@ -255,6 +267,8 @@ const BR=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥
 const brElem=[4,2,0,0,2,1,1,2,3,3,2,4]; // 子..亥 → 木0火1土2金3水4
 const GNAME=['木','火','土','金','水'];
 const GCOL=['#3fa76b','#ef6b53','#d9a441','#9aa0a8','#5a8fd6'];
+const GMEAN=['成長・やさしさ・伸びる力','情熱・華やかさ・表現力','安定・信頼・つつむ力','意志・決断・美意識','知性・柔軟・交流'];
+const JUUNIMEAN={'長生':'誕生・スタートの初々しさ','沐浴':'不安定・迷いと感受性','冠帯':'自立へ向かう成長期','建禄':'充実・独り立ちの安定','帝旺':'最盛・エネルギーの頂点','衰':'落ち着き・成熟','病':'繊細・内省と気づかい','死':'静けさ・思索と集中','墓':'蓄積・保守と粘り','絶':'転機・ゼロからの再出発','胎':'芽生え・準備と可能性','養':'育まれる・のんびり吸収'};
 const stemElem=i=>Math.floor(i/2), stemYang=i=>i%2===0;
 const PERSON=[
  {n:'甲（きのえ）',s:'木・大樹',d:'まっすぐで向上心が強く、面倒見のよいリーダー気質。曲がったことが嫌いで、コツコツ上へ伸びていく大樹のような人。'},
@@ -505,7 +519,7 @@ function renderBazi(){
                +pil('日柱',b.dsi,b.dbi,'日主');
     if(b.hour!==undefined) pillars+=pil('時柱',b.hsi,b.hbi,tg(b.hsi));
     const cnt=gogyoCount(b), mx=Math.max(...cnt,1);
-    const bars=cnt.map((v,gi)=>`<div class="grow"><div class="gl" style="color:${GCOL[gi]}">${GNAME[gi]}</div><div class="bar"><i style="width:${Math.round(v/mx*100)}%;background:${GCOL[gi]}"></i></div><div class="gv">${v}</div></div>`).join('');
+    const bars=cnt.map((v,gi)=>`<div class="grow"><div class="gl" style="color:${GCOL[gi]}">${GNAME[gi]}</div><div class="bar"><i style="width:${Math.round(v/mx*100)}%;background:${GCOL[gi]}"></i></div><div class="gv">${v}</div><div class="gk">${GMEAN[gi]}</div></div>`).join('');
     const st=strength(b.dsi,cnt);
     const kb=kubou(b.dg); const kbTxt=BR[kb[0]]+BR[kb[1]];
     const ryG=tg(rb.ysi); // 流年の通変星（今年の年干を日主から見る）
@@ -555,7 +569,27 @@ function renderBazi(){
   }else{
     ex=`<div class="compat"><h4>👨‍👩‍👧‍👦 家族の相性診断</h4><div class="ph"><p>2人以上を入力すると、五行の相生・相剋と干支の合・冲から相性を自動計算します。</p></div></div>`;
   }
-  document.getElementById('extra').innerHTML=ex;
+  document.getElementById('extra').innerHTML=ex+glossaryHTML();
+}
+function glossaryHTML(){
+  const gogyoRows=GNAME.map((g,i)=>`<div class="grow"><div class="gl" style="color:${GCOL[i]}">${g}</div><div class="gk" style="flex:1;text-align:left">${GMEAN[i]}</div></div>`).join('');
+  const tsuhen=Object.keys(TG).map(k=>`<li><b>${k}</b>：${TG[k]}</li>`).join('');
+  const juuni=STAGES.map(s=>`<li><b>${s}</b>：${JUUNIMEAN[s]}</li>`).join('');
+  return `
+    <details class="glossary">
+      <summary>☯ 用語の意味（タップで開く）</summary>
+      <div class="gbody">
+        <div class="gsec"><h5>五行（ごぎょう）</h5><p>世界を5つの要素で捉える考え方。バランスで性質を読みます。</p>${gogyoRows}</div>
+        <div class="gsec"><h5>日主（にっしゅ）</h5><p>日柱の天干。四柱推命でいちばん大切な「あなた自身」を表す軸です。</p></div>
+        <div class="gsec"><h5>身強・身弱（みきょう・みじゃく）</h5><p>日主を支える五行が多いか少ないか。<b>身強</b>＝自分の力で進むパワー型、<b>身弱</b>＝周囲を活かす協調型（優劣ではなく傾向）。</p></div>
+        <div class="gsec"><h5>通変星（つうへんせい）＝十神</h5><p>日主から見た関係で、性格・才能の方向性を表す10種。</p><ul>${tsuhen}</ul></div>
+        <div class="gsec"><h5>十二運星（じゅうにうんせい）</h5><p>その柱のエネルギーの段階を、人の一生になぞらえた12種。</p><ul>${juuni}</ul></div>
+        <div class="gsec"><h5>蔵干（ぞうかん）</h5><p>地支の中に隠れた天干。表に出ない才能や本音を表します。</p></div>
+        <div class="gsec"><h5>空亡（くうぼう）＝天中殺</h5><p>物事が実りにくい「充電期間」。焦らず種まきに向く時期・分野とされます。</p></div>
+        <div class="gsec"><h5>大運（だいうん）</h5><p>10年ごとに巡ってくる運の大きな流れ。生まれた時刻ではなく生月と性別から算出します。</p></div>
+        <div class="gsec"><h5>流年（りゅうねん）</h5><p>その年ごとの運。今年の干支を日主から見た通変星で傾向を読みます。</p></div>
+      </div>
+    </details>`;
 }
 function shade(hex){const n=parseInt(hex.slice(1),16);let r=Math.max(0,(n>>16)-30),g=Math.max(0,((n>>8)&255)-30),b=Math.max(0,(n&255)-30);return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}
 
