@@ -389,6 +389,7 @@ function renderAnimal(){
   const rc=document.getElementById('rcards'); rc.innerHTML='';
   lastPeople.forEach((p,i)=>{
     const no=charNo(p.y,p.m,p.d), row=C[no-1], name=row[1], animal=row[2], summary=row[3], a=A[animal], g=G[a.g];
+    const b=bazi(p.y,p.m,p.d); // 四柱推命との対応（日柱）
     const who=p.name||('メンバー'+(i+1));
     const card=document.createElement('div'); card.className='rcard';
     card.innerHTML=`
@@ -397,7 +398,7 @@ function renderAnimal(){
         <div class="meta">
           <div class="pname">${esc(who)}（${p.y}/${p.m}/${p.d}）</div>
           <div class="cname">${name}</div>
-          <div class="sub"><span class="pill">キャラNo.${no}</span><span class="pill">${animal} ${a.e}</span><span class="pill">${g.emoji}${g.name.replace('グループ','')}</span></div>
+          <div class="sub"><span class="pill">キャラNo.${no}</span><span class="pill">${animal} ${a.e}</span><span class="pill">${g.emoji}${g.name.replace('グループ','')}</span><span class="pill">☯ 日柱 ${b.day}</span></div>
         </div>
         <div class="chev">▾</div>
       </div>
@@ -405,6 +406,7 @@ function renderAnimal(){
         <div class="lbl">キャラクター</div><p>${summary}</p>
         <div class="lbl">${g.emoji} ${g.name}の傾向</div><p>${g.desc}</p>
         <div class="lbl">キーワード</div><p>${a.k.map(k=>'#'+k).join('　')}</p>
+        <div class="lbl">四柱推命との対応</div><p>この動物キャラは、生まれた日の干支＝<b>日柱「${b.day}」</b>（日主：${PERSON[b.dsi].n}）に対応します。「☯ 四柱推命」モードで詳しく見られます。</p>
       </div>`;
     card.querySelector('.top').onclick=()=>card.classList.toggle('open');
     rc.appendChild(card);
@@ -433,6 +435,7 @@ function renderBazi(){
         <div class="god">${god}</div></div>`;
     const cnt=gogyoCount(b), mx=Math.max(...cnt,1);
     const bars=cnt.map((v,gi)=>`<div class="grow"><div class="gl" style="color:${GCOL[gi]}">${GNAME[gi]}</div><div class="bar"><i style="width:${Math.round(v/mx*100)}%;background:${GCOL[gi]}"></i></div><div class="gv">${v}</div></div>`).join('');
+    const no=charNo(p.y,p.m,p.d), arow=C[no-1], aInfo=A[arow[2]]; // 動物占いとの対応
     const card=document.createElement('div'); card.className='bcard';
     card.innerHTML=`
       <div class="btop" style="background:linear-gradient(135deg,${hcol},${shade(hcol)})">
@@ -448,6 +451,7 @@ function renderBazi(){
         </div>
         <div class="gogyo"><div class="glab">五行バランス</div>${bars}</div>
         <div class="perso"><div class="lbl">性格（日主）</div><p>${per.d}</p></div>
+        <div class="perso"><div class="lbl">動物占いとの対応</div><p>日柱「${b.day}」は、動物占いの <b>No.${no} ${arow[1]} ${aInfo.e}</b> に対応します。「🐾 動物占い」モードで詳しく見られます。</p></div>
       </div>`;
     rc.appendChild(card);
   });
