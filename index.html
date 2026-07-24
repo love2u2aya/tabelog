@@ -93,8 +93,17 @@
   .grow .bar i{display:block;height:100%;border-radius:6px}
   .grow .gv{width:16px;font-size:11px;color:var(--sub);text-align:right}
   .perso{margin-top:14px}
-  .perso .lbl{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:3px}
+  .perso .lbl,.daiun .lbl{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:3px}
   .perso p{font-size:13.5px;line-height:1.8;color:#5a4b44}
+  .pillar .zk{font-size:9.5px;color:var(--sub);margin-top:3px;line-height:1.3}
+  .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .tag{font-size:11.5px;font-weight:800;padding:4px 11px;border-radius:999px;border:1.5px solid var(--line);color:#7a685f;background:#fff}
+  .daiun{margin-top:16px}
+  .durow{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+  .ducell{flex:none;min-width:52px;text-align:center;background:#fffaf6;border:1px solid var(--line);border-radius:10px;padding:7px 4px}
+  .ducell .da{font-size:10px;color:var(--sub);font-weight:700}
+  .ducell .dg{font-size:17px;font-weight:900;line-height:1.2;margin:2px 0}
+  .ducell .dt{font-size:9.5px;color:var(--sub);font-weight:700}
 
   /* compat / placeholder */
   .compat{margin-top:22px}
@@ -275,7 +284,16 @@ function solarLong(jd){
   let l=L0+Cc-0.00569-0.00478*Math.sin(om*Math.PI/180);
   return ((l%360)+360)%360;
 }
-function bazi(y,m,d){
+// 蔵干（地支に隠れた天干）子..亥
+const ZOKAN=[[9],[5,9,7],[0,2,4],[1],[4,1,9],[2,6,4],[3,5],[5,3,1],[6,8,4],[7],[4,7,3],[8,0]];
+// 十二運星
+const STAGES=['長生','沐浴','冠帯','建禄','帝旺','衰','病','死','墓','絶','胎','養'];
+const LS=[11,6,2,9,2,9,5,0,8,3]; // 甲..癸 の長生の地支index
+function juuni(si,bi){return stemYang(si)?STAGES[((bi-LS[si])%12+12)%12]:STAGES[((LS[si]-bi)%12+12)%12];}
+// 空亡（天中殺）
+function kubou(dg){const j=Math.floor(dg/10),a=((j*10)+10)%12,b=((j*10)+11)%12;return [a,b];}
+function mbOfDate(y,m,d){return Math.floor(((((solarLong(toJDN(y,m,d)-0.375)-315)%360)+360)%360)/30);} // 0=寅
+function bazi(y,m,d,hh){
   const lam=solarLong(toJDN(y,m,d)-0.375); // 12:00 JST
   const mb=Math.floor(((((lam-315)%360)+360)%360)/30); // 0=寅
   const monthOrder=mb+1;
@@ -286,15 +304,42 @@ function bazi(y,m,d){
   const mbi=(monthOrder+1)%12;
   const dg=(((toJDN(y,m,d)+49)%60)+60)%60; // 0=甲子
   const dsi=dg%10, dbi=dg%12;
-  return {py, ysi,ybi, msi,mbi, dsi,dbi,
+  const o={py, ysi,ybi, msi,mbi, dsi,dbi, dg,
     year:STEMS[ysi]+BR[ybi], month:STEMS[msi]+BR[mbi], day:STEMS[dsi]+BR[dbi],
-    stems:[ysi,msi,dsi], branches:[ybi,mbi,dbi]};
+    stems:[ysi,msi,dsi], branches:[ybi,mbi,dbi], labels:['年柱','月柱','日柱']};
+  if(hh!==null&&hh!==undefined){ // 時柱（入力があれば稼働）
+    const hbi=Math.floor((hh+1)/2)%12;          // 時支
+    const ziStem=((dsi%5)*2)%10;                // 五鼠遁：子刻の干
+    const hsi=(ziStem+hbi)%10;                  // 時干
+    o.hsi=hsi; o.hbi=hbi; o.hour=STEMS[hsi]+BR[hbi];
+    o.stems.push(hsi); o.branches.push(hbi); o.labels.push('時柱');
+  }
+  return o;
 }
+// 五行バランス（天干＋各地支の蔵干をすべて集計）
 function gogyoCount(b){
   const c=[0,0,0,0,0];
   b.stems.forEach(s=>c[stemElem(s)]++);
-  b.branches.forEach(br=>c[brElem[br]]++);
+  b.branches.forEach(br=>ZOKAN[br].forEach(z=>c[stemElem(z)]++));
   return c;
+}
+// 身強・身弱（簡易：日主と同五行＋日主を生む五行を味方として集計）
+function strength(dsi,c){
+  const de=stemElem(dsi), support=c[de]+c[(de+4)%5], tot=c.reduce((a,b)=>a+b,0);
+  return {support,tot,label:support*2>=tot?'身強':'身弱',
+    desc:support*2>=tot?'味方の五行が多め。自分の意志で切り開くパワータイプ。':'味方の五行が少なめ。周囲と協調し、環境を活かすと伸びるタイプ。'};
+}
+// 大運（10年ごとの運）
+function daiun(y,m,d,ysi,msi,mbi,male){
+  const forward=(stemYang(ysi)===male);
+  const bmb=mbOfDate(y,m,d), step=forward?1:-1;
+  let days=0,cy=y,cm=m,cd=d;
+  for(let k=0;k<40;k++){const dt=new Date(Date.UTC(cy,cm-1,cd));dt.setUTCDate(dt.getUTCDate()+step);cy=dt.getUTCFullYear();cm=dt.getUTCMonth()+1;cd=dt.getUTCDate();days++;if(mbOfDate(cy,cm,cd)!==bmb)break;}
+  const startAge=Math.max(1,Math.round((forward?days:days-1)/3));
+  let mIdx=-1; for(let k=0;k<60;k++) if(k%10===msi&&k%12===mbi){mIdx=k;break;}
+  const list=[];
+  for(let n=0;n<8;n++){const idx=((mIdx+(forward?(n+1):-(n+1)))%60+60)%60;list.push({age:startAge+n*10,si:idx%10,bi:idx%12});}
+  return {forward,startAge,list};
 }
 // 相性
 const HE=[[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]];   // 支合
@@ -330,19 +375,26 @@ function makePerson(data){
       <input type="text" class="pname-in" placeholder="名前（任意）" maxlength="20">
       <button class="rm" title="削除">×</button>
     </div>
-    <div class="date-row"><select class="y"></select><select class="m"></select><select class="d"></select></div>`;
+    <div class="date-row"><select class="y"></select><select class="m"></select><select class="d"></select></div>
+    <div class="date-row" style="margin-top:8px"><select class="sex"></select><select class="hh"></select></div>`;
   const yS=el.querySelector('.y'),mS=el.querySelector('.m'),dS=el.querySelector('.d');
+  const sexS=el.querySelector('.sex'),hhS=el.querySelector('.hh');
   for(let y=NOW;y>=1919;y--) yS.add(new Option(y+'年',y));
   for(let mo=1;mo<=12;mo++) mS.add(new Option(mo+'月',mo));
+  sexS.add(new Option('♂ 男性','M')); sexS.add(new Option('♀ 女性','F'));
+  hhS.add(new Option('時刻：不明',''));
+  for(let h=0;h<24;h++) hhS.add(new Option(h+'時台',h));
   function fillDays(keep){const last=new Date(+yS.value,+mS.value,0).getDate();dS.innerHTML='';for(let d=1;d<=last;d++)dS.add(new Option(d+'日',d));if(keep&&keep<=last)dS.value=keep;}
   yS.value=data.y||1990; mS.value=data.m||1; fillDays(data.d||1);
+  sexS.value=data.sex||'M';
+  hhS.value=(data.hh===0||data.hh)?String(data.hh):'';
   yS.onchange=()=>fillDays(+dS.value); mS.onchange=()=>fillDays(+dS.value);
   if(data.name) el.querySelector('.pname-in').value=data.name;
   el.querySelector('.rm').onclick=()=>{ if(peopleEl.children.length<=1)return; el.remove(); renumber(); };
   peopleEl.appendChild(el); renumber();
 }
 function renumber(){[...peopleEl.children].forEach((el,i)=>el.querySelector('.idx').textContent=i+1);}
-function readPeople(){return [...peopleEl.children].map(el=>({name:el.querySelector('.pname-in').value.trim(),y:+el.querySelector('.y').value,m:+el.querySelector('.m').value,d:+el.querySelector('.d').value}));}
+function readPeople(){return [...peopleEl.children].map(el=>{const hv=el.querySelector('.hh').value;return{name:el.querySelector('.pname-in').value.trim(),y:+el.querySelector('.y').value,m:+el.querySelector('.m').value,d:+el.querySelector('.d').value,sex:el.querySelector('.sex').value,hh:hv===''?null:+hv};});}
 function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
 /* =========================================================
@@ -426,38 +478,60 @@ function renderAnimal(){
 
 function renderBazi(){
   const rc=document.getElementById('rcards'); rc.innerHTML='';
-  const bs=lastPeople.map(p=>bazi(p.y,p.m,p.d));
+  const bs=lastPeople.map(p=>bazi(p.y,p.m,p.d,p.hh));
+  const NOWD=new Date();
+  const ry=NOWD.getFullYear(),rm=NOWD.getMonth()+1,rd=NOWD.getDate();
+  const rb=bazi(ry,rm,rd); // 今年の流年
   lastPeople.forEach((p,i)=>{
     const b=bs[i], who=p.name||('メンバー'+(i+1));
     const dEl=stemElem(b.dsi), hcol=GCOL[dEl];
     const per=PERSON[b.dsi];
-    // 通変星（年干・月干）
     const De=stemElem(b.dsi),Dy=stemYang(b.dsi);
-    const gYear=tenGod(De,Dy,stemElem(b.ysi),stemYang(b.ysi));
-    const gMonth=tenGod(De,Dy,stemElem(b.msi),stemYang(b.msi));
-    const pil=(lbl,si,bi,god)=>`
-      <div class="pillar"><div class="plbl">${lbl}</div>
+    const tg=(si)=>tenGod(De,Dy,stemElem(si),stemYang(si));
+    // 命式ピラー（蔵干・十二運つき）
+    const pil=(lbl,si,bi,god)=>{
+      const zk=ZOKAN[bi].map(z=>STEMS[z]).join('');
+      return `<div class="pillar"><div class="plbl">${lbl}</div>
         <div class="gan" style="color:${GCOL[stemElem(si)]}">${STEMS[si]}</div>
         <div class="shi" style="color:${GCOL[brElem[bi]]}">${BR[bi]}</div>
-        <div class="god">${god}</div></div>`;
+        <div class="god">${god}</div>
+        <div class="zk">蔵干 ${zk}</div>
+        <div class="zk">${juuni(b.dsi,bi)}</div></div>`;
+    };
+    let pillars=pil('年柱',b.ysi,b.ybi,tg(b.ysi))
+               +pil('月柱',b.msi,b.mbi,tg(b.msi))
+               +pil('日柱',b.dsi,b.dbi,'日主');
+    if(b.hour!==undefined) pillars+=pil('時柱',b.hsi,b.hbi,tg(b.hsi));
     const cnt=gogyoCount(b), mx=Math.max(...cnt,1);
     const bars=cnt.map((v,gi)=>`<div class="grow"><div class="gl" style="color:${GCOL[gi]}">${GNAME[gi]}</div><div class="bar"><i style="width:${Math.round(v/mx*100)}%;background:${GCOL[gi]}"></i></div><div class="gv">${v}</div></div>`).join('');
-    const no=charNo(p.y,p.m,p.d), arow=C[no-1], aInfo=A[arow[2]]; // 動物占いとの対応
+    const st=strength(b.dsi,cnt);
+    const kb=kubou(b.dg); const kbTxt=BR[kb[0]]+BR[kb[1]];
+    const ryG=tg(rb.ysi); // 流年の通変星（今年の年干を日主から見る）
+    // 大運
+    const male=(p.sex||'M')==='M';
+    const du=daiun(p.y,p.m,p.d,b.ysi,b.msi,b.mbi,male);
+    const duCells=du.list.map(x=>`<div class="ducell"><div class="da">${x.age}〜</div><div class="dg" style="color:${GCOL[stemElem(x.si)]}">${STEMS[x.si]}${BR[x.bi]}</div><div class="dt">${tg(x.si)}</div></div>`).join('');
+    const no=charNo(p.y,p.m,p.d), arow=C[no-1], aInfo=A[arow[2]];
+    const timeNote=b.hour===undefined?'　※時刻未入力のため三柱':'';
     const card=document.createElement('div'); card.className='bcard';
     card.innerHTML=`
       <div class="btop" style="background:linear-gradient(135deg,${hcol},${shade(hcol)})">
-        <div class="bpname">${esc(who)}（${p.y}/${p.m}/${p.d}）</div>
+        <div class="bpname">${esc(who)}（${p.y}/${p.m}/${p.d}${b.hour!==undefined?' '+p.hh+'時台':''}・${male?'男性':'女性'}）</div>
         <div class="bmain">日主：${per.n}</div>
-        <div class="bsub">${per.s}${b.py!==p.y?'　※立春前のため年柱は'+b.py+'年基準':''}</div>
+        <div class="bsub">${per.s}${b.py!==p.y?'　※立春前のため年柱は'+b.py+'年基準':''}${timeNote}</div>
       </div>
       <div class="binner">
-        <div class="meishiki">
-          ${pil('年柱',b.ysi,b.ybi,TG[gYear]?gYear+'／'+TG[gYear]:gYear)}
-          ${pil('月柱',b.msi,b.mbi,TG[gMonth]?gMonth+'／'+TG[gMonth]:gMonth)}
-          ${pil('日柱',b.dsi,b.dbi,'日主（自分）')}
+        <div class="meishiki">${pillars}</div>
+        <div class="tags">
+          <span class="tag" style="border-color:${st.label==='身強'?'#e08a3c':'#5a8fd6'};color:${st.label==='身強'?'#c96a1f':'#3f6fb0'}">${st.label}</span>
+          <span class="tag">空亡：${kbTxt}</span>
+          <span class="tag">今年(${rb.year})：${ryG}</span>
         </div>
-        <div class="gogyo"><div class="glab">五行バランス</div>${bars}</div>
+        <div class="gogyo"><div class="glab">五行バランス（蔵干含む）</div>${bars}</div>
         <div class="perso"><div class="lbl">性格（日主）</div><p>${per.d}</p></div>
+        <div class="perso"><div class="lbl">身強・身弱</div><p><b>${st.label}</b>：${st.desc}</p></div>
+        <div class="daiun"><div class="lbl">大運（10年ごとの運の流れ・${du.forward?'順行':'逆行'}／${du.startAge}歳スタート）</div>
+          <div class="durow">${duCells}</div></div>
         <div class="perso"><div class="lbl">動物占いとの対応</div><p>日柱「${b.day}」は、動物占いの <b>No.${no} ${arow[1]} ${aInfo.e}</b> に対応します。「🐾 動物占い」モードで詳しく見られます。</p></div>
       </div>`;
     rc.appendChild(card);
