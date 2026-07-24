@@ -100,10 +100,12 @@
   .tag{font-size:11.5px;font-weight:800;padding:4px 11px;border-radius:999px;border:1.5px solid var(--line);color:#7a685f;background:#fff}
   .daiun{margin-top:16px}
   .durow{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
-  .ducell{flex:none;min-width:52px;text-align:center;background:#fffaf6;border:1px solid var(--line);border-radius:10px;padding:7px 4px}
-  .ducell .da{font-size:10px;color:var(--sub);font-weight:700}
+  .ducell{flex:none;min-width:62px;text-align:center;background:#fffaf6;border:1px solid var(--line);border-radius:10px;padding:7px 5px;position:relative}
+  .ducell.now{background:#fff1e9;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+  .ducell .da{font-size:10px;color:var(--sub);font-weight:700;white-space:nowrap}
   .ducell .dg{font-size:17px;font-weight:900;line-height:1.2;margin:2px 0}
   .ducell .dt{font-size:9.5px;color:var(--sub);font-weight:700}
+  .ducell .nowb{margin-top:3px;font-size:9px;font-weight:800;color:#fff;background:var(--accent);border-radius:6px;padding:1px 0}
 
   /* compat / placeholder */
   .compat{margin-top:22px}
@@ -510,7 +512,11 @@ function renderBazi(){
     // 大運
     const male=(p.sex||'M')==='M';
     const du=daiun(p.y,p.m,p.d,b.ysi,b.msi,b.mbi,male);
-    const duCells=du.list.map(x=>`<div class="ducell"><div class="da">${x.age}〜</div><div class="dg" style="color:${GCOL[stemElem(x.si)]}">${STEMS[x.si]}${BR[x.bi]}</div><div class="dt">${tg(x.si)}</div></div>`).join('');
+    const age=ry-p.y; // 現在のおおよその満年齢
+    const duCells=du.list.map(x=>{
+      const end=x.age+9, now=(age>=x.age&&age<=end);
+      return `<div class="ducell${now?' now':''}"><div class="da">${x.age}〜${end}歳</div><div class="dg" style="color:${GCOL[stemElem(x.si)]}">${STEMS[x.si]}${BR[x.bi]}</div><div class="dt">${tg(x.si)}</div>${now?'<div class="nowb">今ここ</div>':''}</div>`;
+    }).join('');
     const no=charNo(p.y,p.m,p.d), arow=C[no-1], aInfo=A[arow[2]];
     const timeNote=b.hour===undefined?'　※時刻未入力のため三柱':'';
     const card=document.createElement('div'); card.className='bcard';
