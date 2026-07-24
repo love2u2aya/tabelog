@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>動物占い | 家族まるごと60キャラクター診断</title>
+<title>動物占い＆四柱推命 | 家族まるごと診断</title>
 <style>
   :root{
     --bg1:#ffecd2; --bg2:#fcb69f; --card:#ffffff; --ink:#3a2e2a;
@@ -18,37 +18,35 @@
   }
   .wrap{width:100%;max-width:560px}
   .card{background:var(--card);border-radius:26px;box-shadow:var(--shadow);overflow:hidden}
-  header{text-align:center;padding:32px 24px 24px;background:linear-gradient(135deg,#fff5ef,#ffe9df);border-bottom:1px solid var(--line)}
-  header .emoji{font-size:44px;line-height:1}
-  header h1{font-size:23px;margin:12px 0 6px;letter-spacing:.02em}
+  header{text-align:center;padding:30px 24px 22px;background:linear-gradient(135deg,#fff5ef,#ffe9df);border-bottom:1px solid var(--line)}
+  header .emoji{font-size:42px;line-height:1}
+  header h1{font-size:22px;margin:11px 0 5px;letter-spacing:.02em}
   header p{color:var(--sub);font-size:13px;line-height:1.7}
-  .body{padding:24px 22px 30px}
+  .body{padding:22px 22px 30px}
+
+  .modes{display:flex;background:#f4e7de;border-radius:14px;padding:4px;margin-bottom:20px}
+  .modes button{flex:1;padding:11px;border:none;background:transparent;border-radius:11px;font-size:14px;font-weight:800;color:var(--sub);cursor:pointer;transition:.15s}
+  .modes button.on{background:#fff;color:var(--accent);box-shadow:0 2px 8px rgba(160,110,80,.15)}
 
   .people{display:flex;flex-direction:column;gap:14px}
-  .person{background:#fffaf6;border:1px solid var(--line);border-radius:18px;padding:14px 14px 16px;position:relative}
+  .person{background:#fffaf6;border:1px solid var(--line);border-radius:18px;padding:14px 14px 16px}
   .person .row1{display:flex;gap:10px;align-items:center;margin-bottom:10px}
-  .person .idx{width:26px;height:26px;flex:none;border-radius:50%;background:var(--accent);color:#fff;
-    font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center}
-  .person input[type=text]{flex:1;padding:11px 12px;font-size:15px;border:1.5px solid var(--line);
-    border-radius:12px;background:#fff;color:var(--ink)}
+  .person .idx{width:26px;height:26px;flex:none;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .person input[type=text]{flex:1;padding:11px 12px;font-size:15px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
   .person input[type=text]:focus{outline:none;border-color:var(--accent2)}
-  .rm{flex:none;width:30px;height:30px;border:none;border-radius:50%;background:#f4e4da;color:#b08a78;
-    font-size:17px;font-weight:800;cursor:pointer;line-height:1}
+  .rm{flex:none;width:30px;height:30px;border:none;border-radius:50%;background:#f4e4da;color:#b08a78;font-size:17px;font-weight:800;cursor:pointer;line-height:1}
   .rm:hover{background:#efd5c7}
   .date-row{display:flex;gap:8px}
   select{
-    flex:1;padding:11px 8px;font-size:14px;border:1.5px solid var(--line);border-radius:12px;
-    background:#fff;color:var(--ink);appearance:none;-webkit-appearance:none;cursor:pointer;
+    flex:1;padding:11px 8px;font-size:14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);
+    appearance:none;-webkit-appearance:none;cursor:pointer;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");
     background-repeat:no-repeat;background-position:right 10px center;
   }
   select:focus{outline:none;border-color:var(--accent2)}
-  .add{margin-top:14px;width:100%;padding:13px;border:1.5px dashed #ffc4ad;border-radius:14px;background:#fff6f1;
-    color:var(--accent);font-size:14px;font-weight:800;cursor:pointer}
+  .add{margin-top:14px;width:100%;padding:13px;border:1.5px dashed #ffc4ad;border-radius:14px;background:#fff6f1;color:var(--accent);font-size:14px;font-weight:800;cursor:pointer}
   .add:hover{background:#fff0e8}
-  .btn{width:100%;margin-top:16px;padding:16px;border:none;border-radius:16px;font-size:16px;font-weight:800;
-    color:#fff;cursor:pointer;letter-spacing:.06em;background:linear-gradient(135deg,var(--accent),var(--accent2));
-    box-shadow:0 10px 22px rgba(255,122,89,.38);transition:transform .12s,box-shadow .12s}
+  .btn{width:100%;margin-top:16px;padding:16px;border:none;border-radius:16px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;letter-spacing:.06em;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 10px 22px rgba(255,122,89,.38);transition:transform .12s,box-shadow .12s}
   .btn:active{transform:translateY(2px);box-shadow:0 5px 12px rgba(255,122,89,.34)}
   .err{color:#d9534f;font-size:13px;margin-top:12px;text-align:center;display:none}
 
@@ -58,6 +56,8 @@
   .res-title{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
   .res-title::before{content:"";width:6px;height:20px;border-radius:3px;background:linear-gradient(var(--accent),var(--accent2))}
   .rcards{display:flex;flex-direction:column;gap:12px}
+
+  /* animal cards */
   .rcard{border-radius:18px;overflow:hidden;box-shadow:0 6px 16px rgba(160,110,80,.14)}
   .rcard .top{display:flex;align-items:center;gap:14px;padding:14px 16px;color:#fff;cursor:pointer}
   .rcard .emoji{font-size:42px;line-height:1;filter:drop-shadow(0 3px 5px rgba(0,0,0,.18))}
@@ -69,17 +69,46 @@
   .rcard .chev{flex:none;opacity:.85;font-size:13px;transition:transform .2s}
   .rcard.open .chev{transform:rotate(180deg)}
   .rcard .detail{background:#fffaf6;padding:0 16px;max-height:0;overflow:hidden;transition:max-height .28s ease,padding .28s ease}
-  .rcard.open .detail{max-height:360px;padding:14px 16px 16px}
+  .rcard.open .detail{max-height:400px;padding:14px 16px 16px}
   .rcard .detail p{font-size:13.5px;line-height:1.8;color:#5a4b44}
   .rcard .detail .lbl{font-size:11.5px;font-weight:800;color:var(--sub);margin:10px 0 3px}
 
-  .compat{margin-top:22px;background:#fff6f1;border:1px dashed #ffc9b3;border-radius:18px;padding:18px 16px;text-align:center}
-  .compat h4{font-size:14px;margin-bottom:6px}
-  .compat p{font-size:12.5px;color:var(--sub);line-height:1.7}
-  .compat .soon{display:inline-block;margin-top:10px;background:#ffe0d3;color:var(--accent);font-size:11.5px;font-weight:800;padding:5px 13px;border-radius:999px}
+  /* bazi cards */
+  .bcard{border-radius:18px;overflow:hidden;box-shadow:0 6px 16px rgba(160,110,80,.14);background:#fff;border:1px solid var(--line)}
+  .bcard .btop{padding:14px 16px;color:#fff}
+  .bcard .bpname{font-size:13px;font-weight:700;opacity:.95}
+  .bcard .bmain{font-size:18px;font-weight:900;margin-top:2px}
+  .bcard .bsub{font-size:12px;opacity:.95;margin-top:3px}
+  .bcard .binner{padding:14px 16px 16px}
+  .meishiki{display:flex;gap:8px}
+  .pillar{flex:1;text-align:center;background:#fffaf6;border:1px solid var(--line);border-radius:12px;padding:9px 4px}
+  .pillar .plbl{font-size:11px;color:var(--sub);font-weight:700;margin-bottom:5px}
+  .pillar .gan,.pillar .shi{font-size:27px;font-weight:900;line-height:1.18}
+  .pillar .god{font-size:10px;color:var(--sub);margin-top:6px;font-weight:700;line-height:1.3}
+  .gogyo{margin-top:16px}
+  .gogyo .glab{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:6px}
+  .grow{display:flex;align-items:center;gap:8px;margin:4px 0}
+  .grow .gl{width:18px;font-size:12px;font-weight:800;text-align:center}
+  .grow .bar{flex:1;height:11px;border-radius:6px;background:#f0e3da;overflow:hidden}
+  .grow .bar i{display:block;height:100%;border-radius:6px}
+  .grow .gv{width:16px;font-size:11px;color:var(--sub);text-align:right}
+  .perso{margin-top:14px}
+  .perso .lbl{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:3px}
+  .perso p{font-size:13.5px;line-height:1.8;color:#5a4b44}
 
-  .again{margin-top:18px;background:transparent;color:var(--accent);border:1.5px solid #ffd7c7;border-radius:14px;
-    padding:13px;width:100%;font-weight:800;font-size:14px;cursor:pointer}
+  /* compat / placeholder */
+  .compat{margin-top:22px}
+  .compat h4{font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .cpair{background:#fffaf6;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+  .cpair .ch{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .cpair .names{font-size:14px;font-weight:800}
+  .cpair .lab{font-size:13px;font-weight:800;white-space:nowrap}
+  .cpair .cn{font-size:12.5px;color:#5a4b44;line-height:1.7;margin-top:6px}
+  .ph{background:#fff6f1;border:1px dashed #ffc9b3;border-radius:18px;padding:18px 16px;text-align:center}
+  .ph p{font-size:12.5px;color:var(--sub);line-height:1.7}
+  .ph .soon{display:inline-block;margin-top:10px;background:#ffe0d3;color:var(--accent);font-size:11.5px;font-weight:800;padding:5px 13px;border-radius:999px}
+
+  .again{margin-top:18px;background:transparent;color:var(--accent);border:1.5px solid #ffd7c7;border-radius:14px;padding:13px;width:100%;font-weight:800;font-size:14px;cursor:pointer}
   .note{margin-top:18px;font-size:11px;color:var(--sub);text-align:center;line-height:1.7}
 </style>
 </head>
@@ -88,32 +117,40 @@
   <div class="card">
     <header>
       <div class="emoji">🐾</div>
-      <h1>動物占い</h1>
-      <p>家族みんなの生年月日を入れて、<br>全員の動物キャラを一度に診断しよう。</p>
+      <h1>動物占い ＆ 四柱推命</h1>
+      <p>家族みんなの生年月日を入れて、<br>全員をまとめて診断しよう。</p>
     </header>
     <div class="body">
+      <div class="modes">
+        <button id="mAnimal" class="on">🐾 動物占い</button>
+        <button id="mBazi">☯ 四柱推命</button>
+      </div>
+
       <div class="people" id="people"></div>
       <button class="add" id="add">＋ 人を追加</button>
       <button class="btn" id="go">全員を占う 🔮</button>
       <div class="err" id="err">日付が正しくありません。もう一度確認してください。</div>
 
       <div id="results">
-        <div class="res-title">診断結果</div>
+        <div class="res-title" id="resTitle">診断結果</div>
         <div class="rcards" id="rcards"></div>
-        <div class="compat">
-          <h4>👨‍👩‍👧‍👦 家族の相性診断</h4>
-          <p>組み合わせごとの相性を表示する機能は、相性データの登録後に実装予定です。</p>
-          <span class="soon">準備中</span>
-        </div>
+        <div id="extra"></div>
         <button class="again" id="again">入力に戻る 🔄</button>
       </div>
     </div>
   </div>
-  <p class="note">※ 生年月日の干支（60日周期）にもとづく60キャラクターの動物占い。最後に占った内容はこの端末に保存されます。</p>
+  <p class="note" id="note">※ 生年月日の干支（60日周期）にもとづく診断。最後に占った内容はこの端末に保存されます。</p>
 </div>
 
 <script>
-// ===== 12動物（絵文字・3分類・キーワード）=====
+/* =========================================================
+   共通：日付 → 干支
+   ========================================================= */
+function toJDN(y,m,d){const a=Math.floor((14-m)/12),y2=y+4800-a,m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
+
+/* =========================================================
+   動物占い（60キャラクター）
+   ========================================================= */
 const A = {
   "チーター":{e:"🐆",g:"sun",  k:["スピード","直感","情熱"]},
   "たぬき":  {e:"🦝",g:"moon", k:["愛嬌","経験値","安定感"]},
@@ -129,12 +166,9 @@ const A = {
   "ライオン":{e:"🦁",g:"sun",  k:["風格","責任感","カリスマ"]},
 };
 const G = {
-  sun:  {name:"太陽グループ", emoji:"☀️", c1:"#ff9a3c", c2:"#ff6f43",
-         desc:"未来志向でポジティブ。「これからどうなりたいか」を原動力に、目標に向かって前向きに進むタイプです。"},
-  moon: {name:"月グループ",  emoji:"🌙", c1:"#6d78c9", c2:"#4b56a8",
-         desc:"他者志向で協調を大切に。「みんなのために」を軸に、まわりとの和を保ちながら動くタイプです。"},
-  earth:{name:"地球グループ", emoji:"🌍", c1:"#4fae7b", c2:"#2f8f63",
-         desc:"現実志向でマイペース。「自分がどうしたいか」を軸に、自分のペースを守って動くタイプです。"},
+  sun:  {name:"太陽グループ", emoji:"☀️", c1:"#ff9a3c", c2:"#ff6f43", desc:"未来志向でポジティブ。「これからどうなりたいか」を原動力に、目標に向かって前向きに進むタイプです。"},
+  moon: {name:"月グループ",  emoji:"🌙", c1:"#6d78c9", c2:"#4b56a8", desc:"他者志向で協調を大切に。「みんなのために」を軸に、まわりとの和を保ちながら動くタイプです。"},
+  earth:{name:"地球グループ", emoji:"🌍", c1:"#4fae7b", c2:"#2f8f63", desc:"現実志向でマイペース。「自分がどうしたいか」を軸に、自分のペースを守って動くタイプです。"},
 };
 const C = [
  [1,"長距離ランナーのチータ","チーター","目標に向かって粘り強く努力するタイプ。"],
@@ -198,29 +232,92 @@ const C = [
  [59,"束縛を嫌う黒ひょう","黒ひょう","自由とセンスを大切にし、束縛を嫌うおしゃれな一匹狼。"],
  [60,"慈悲深い虎","虎","面倒見がよく包容力抜群、困っている人を放っておけない。"],
 ];
-
-// ===== 日付 → キャラナンバー(1-60) =====
-function toJDN(y,m,d){const a=Math.floor((14-m)/12),y2=y+4800-a,m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
 function charNo(y,m,d){return (((toJDN(y,m,d)+49)%60)+60)%60+1;}
 
-// ===== 保存（クッキー。file://等でクッキー不可のときはlocalStorageで代替）=====
-const CK="doubutsu_family";
-function saveCookie(list){
-  const v=encodeURIComponent(JSON.stringify(list));
-  try{document.cookie=CK+"="+v+";max-age="+(60*60*24*365)+";path=/;samesite=lax";}catch(e){}
-  try{localStorage.setItem(CK,JSON.stringify(list));}catch(e){}
+/* =========================================================
+   四柱推命（三柱：年・月・日）
+   ========================================================= */
+const STEMS=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const BR=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const brElem=[4,2,0,0,2,1,1,2,3,3,2,4]; // 子..亥 → 木0火1土2金3水4
+const GNAME=['木','火','土','金','水'];
+const GCOL=['#3fa76b','#ef6b53','#d9a441','#9aa0a8','#5a8fd6'];
+const stemElem=i=>Math.floor(i/2), stemYang=i=>i%2===0;
+const PERSON=[
+ {n:'甲（きのえ）',s:'木・大樹',d:'まっすぐで向上心が強く、面倒見のよいリーダー気質。曲がったことが嫌いで、コツコツ上へ伸びていく大樹のような人。'},
+ {n:'乙（きのと）',s:'木・草花',d:'柔軟で協調性があり、しなやかに環境へ適応する粘り強さの持ち主。周囲と和みながら着実に伸びる人。'},
+ {n:'丙（ひのえ）',s:'火・太陽',d:'明るく情熱的で、その場を照らすムードメーカー。裏表がなく行動力にあふれ、みんなを元気づける太陽のような存在。'},
+ {n:'丁（ひのと）',s:'火・灯火',d:'繊細で気配り上手、内側に熱い情熱を秘めた努力家。人の心にそっと寄り添う灯火のような優しさを持つ。'},
+ {n:'戊（つちのえ）',s:'土・山',d:'どっしり安定感があり、面倒見がよく信頼される大黒柱タイプ。動じない包容力で周囲を支える山のような人。'},
+ {n:'己（つちのと）',s:'土・田畑',d:'献身的で世話好き、コツコツ育てる堅実さの持ち主。人を育て支えることに喜びを感じる田畑のような人。'},
+ {n:'庚（かのえ）',s:'金・鋼',d:'意志が強く決断力抜群、正義感にあふれる行動派。曲がらない芯の強さと勝負強さを持つ鋼のような人。'},
+ {n:'辛（かのと）',s:'金・宝石',d:'美意識が高く繊細で、こだわりとプライドを持つ人。磨くほど輝く、宝石のような感性の持ち主。'},
+ {n:'壬（みずのえ）',s:'水・大海',d:'スケールが大きく自由で、柔軟な発想の持ち主。とらわれず流れていく大海のような度量とバイタリティ。'},
+ {n:'癸（みずのと）',s:'水・雨露',d:'知的で感受性が豊か、コツコツ潤す縁の下の力持ち。細やかな気づきで周囲を潤す雨露のような人。'},
+];
+const TG={'比肩':'自立・マイペース','劫財':'社交・行動力','食神':'表現・楽しむ才','傷官':'感性・完璧主義','偏財':'商才・人脈','正財':'堅実・誠実','偏官':'闘志・勝負強さ','正官':'責任感・規律','偏印':'ひらめき・多才','印綬':'知性・思いやり'};
+function tenGod(De,Dy,Oe,Oy){
+  const same=(Dy===Oy);
+  if(Oe===De) return same?'比肩':'劫財';
+  if(Oe===(De+1)%5) return same?'食神':'傷官';
+  if(Oe===(De+2)%5) return same?'偏財':'正財';
+  if(Oe===(De+3)%5) return same?'偏官':'正官';
+  return same?'偏印':'印綬';
 }
-function loadCookie(){
-  const m=document.cookie.match(/(?:^|; )doubutsu_family=([^;]*)/);
-  if(m){try{return JSON.parse(decodeURIComponent(m[1]));}catch(e){}}
-  try{const s=localStorage.getItem(CK); if(s) return JSON.parse(s);}catch(e){}
-  return null;
+function solarLong(jd){
+  const T=(jd-2451545)/36525;
+  const L0=280.46646+36000.76983*T+0.0003032*T*T;
+  const M=357.52911+35999.05029*T-0.0001537*T*T, Mr=M*Math.PI/180;
+  const Cc=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(Mr)+(0.019993-0.000101*T)*Math.sin(2*Mr)+0.000289*Math.sin(3*Mr);
+  const om=125.04-1934.136*T;
+  let l=L0+Cc-0.00569-0.00478*Math.sin(om*Math.PI/180);
+  return ((l%360)+360)%360;
+}
+function bazi(y,m,d){
+  const lam=solarLong(toJDN(y,m,d)-0.375); // 12:00 JST
+  const mb=Math.floor(((((lam-315)%360)+360)%360)/30); // 0=寅
+  const monthOrder=mb+1;
+  let py=y; if(m<=2 && lam<315) py=y-1;
+  const ysi=((py-4)%10+10)%10, ybi=((py-4)%12+12)%12;
+  const tiger=(2+2*(ysi%5))%10;
+  const msi=(tiger+(monthOrder-1))%10;
+  const mbi=(monthOrder+1)%12;
+  const dg=(((toJDN(y,m,d)+49)%60)+60)%60; // 0=甲子
+  const dsi=dg%10, dbi=dg%12;
+  return {py, ysi,ybi, msi,mbi, dsi,dbi,
+    year:STEMS[ysi]+BR[ybi], month:STEMS[msi]+BR[mbi], day:STEMS[dsi]+BR[dbi],
+    stems:[ysi,msi,dsi], branches:[ybi,mbi,dbi]};
+}
+function gogyoCount(b){
+  const c=[0,0,0,0,0];
+  b.stems.forEach(s=>c[stemElem(s)]++);
+  b.branches.forEach(br=>c[brElem[br]]++);
+  return c;
+}
+// 相性
+const HE=[[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]];   // 支合
+const CHONG=[[0,6],[1,7],[2,8],[3,9],[4,10],[5,11]]; // 冲
+const pairHas=(l,a,b)=>l.some(p=>(p[0]===a&&p[1]===b)||(p[0]===b&&p[1]===a));
+function compat(ba,bb){
+  const ea=stemElem(ba.dsi), eb=stemElem(bb.dsi);
+  const na=ba.dbi, nb=bb.dbi;
+  let s=0; const notes=[];
+  if(ea===eb){s+=1;notes.push('日主が同じ五行（'+GNAME[ea]+'）で価値観が似ています。');}
+  else if(ea===(eb+1)%5||eb===(ea+1)%5){s+=2;notes.push('日主の五行が相生（'+GNAME[ea]+'と'+GNAME[eb]+'）。自然に助け合える良い関係です。');}
+  else if(ea===(eb+2)%5||eb===(ea+2)%5){s-=1;notes.push('日主の五行が相剋（'+GNAME[ea]+'と'+GNAME[eb]+'）。刺激的ですが衝突にも注意。');}
+  else{notes.push('日主の五行はほどよい距離感（'+GNAME[ea]+'と'+GNAME[eb]+'）です。');}
+  if(pairHas(HE,na,nb)){s+=2;notes.push('日支が支合（'+BR[na]+BR[nb]+'）で惹かれ合う相性。');}
+  else if(pairHas(CHONG,na,nb)){s-=2;notes.push('日支が冲（'+BR[na]+BR[nb]+'）でぶつかりやすい面も。');}
+  const label=s>=3?'◎ 相性抜群':s>=1?'○ 良い相性':s===0?'△ ふつう':'▲ 要歩み寄り';
+  const col=s>=3?'#2f8f63':s>=1?'#4caf7d':s===0?'#b0902f':'#c96a4f';
+  return {label,col,note:notes.join('')};
 }
 
-// ===== 人の入力行 =====
+/* =========================================================
+   共通：人の入力
+   ========================================================= */
 const NOW=new Date().getFullYear();
 const peopleEl=document.getElementById('people');
-
 function makePerson(data){
   data=data||{};
   const el=document.createElement('div');
@@ -231,60 +328,69 @@ function makePerson(data){
       <input type="text" class="pname-in" placeholder="名前（任意）" maxlength="20">
       <button class="rm" title="削除">×</button>
     </div>
-    <div class="date-row">
-      <select class="y"></select><select class="m"></select><select class="d"></select>
-    </div>`;
+    <div class="date-row"><select class="y"></select><select class="m"></select><select class="d"></select></div>`;
   const yS=el.querySelector('.y'),mS=el.querySelector('.m'),dS=el.querySelector('.d');
   for(let y=NOW;y>=1919;y--) yS.add(new Option(y+'年',y));
-  for(let m=1;m<=12;m++) mS.add(new Option(m+'月',m));
-  function fillDays(keepVal){
-    const last=new Date(+yS.value,+mS.value,0).getDate();
-    dS.innerHTML='';
-    for(let d=1;d<=last;d++) dS.add(new Option(d+'日',d));
-    if(keepVal&&keepVal<=last) dS.value=keepVal;
-  }
+  for(let mo=1;mo<=12;mo++) mS.add(new Option(mo+'月',mo));
+  function fillDays(keep){const last=new Date(+yS.value,+mS.value,0).getDate();dS.innerHTML='';for(let d=1;d<=last;d++)dS.add(new Option(d+'日',d));if(keep&&keep<=last)dS.value=keep;}
   yS.value=data.y||1990; mS.value=data.m||1; fillDays(data.d||1);
   yS.onchange=()=>fillDays(+dS.value); mS.onchange=()=>fillDays(+dS.value);
   if(data.name) el.querySelector('.pname-in').value=data.name;
-  el.querySelector('.rm').onclick=()=>{
-    if(peopleEl.children.length<=1) return; // 最低1人
-    el.remove(); renumber();
-  };
-  peopleEl.appendChild(el);
-  renumber();
+  el.querySelector('.rm').onclick=()=>{ if(peopleEl.children.length<=1)return; el.remove(); renumber(); };
+  peopleEl.appendChild(el); renumber();
 }
-function renumber(){
-  [...peopleEl.children].forEach((el,i)=>{ el.querySelector('.idx').textContent=i+1; });
+function renumber(){[...peopleEl.children].forEach((el,i)=>el.querySelector('.idx').textContent=i+1);}
+function readPeople(){return [...peopleEl.children].map(el=>({name:el.querySelector('.pname-in').value.trim(),y:+el.querySelector('.y').value,m:+el.querySelector('.m').value,d:+el.querySelector('.d').value}));}
+function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+/* =========================================================
+   保存（クッキー＋localStorageフォールバック）
+   ========================================================= */
+const CK="doubutsu_family";
+function save(state){
+  const v=encodeURIComponent(JSON.stringify(state));
+  try{document.cookie=CK+"="+v+";max-age="+(60*60*24*365)+";path=/;samesite=lax";}catch(e){}
+  try{localStorage.setItem(CK,JSON.stringify(state));}catch(e){}
 }
-function readPeople(){
-  return [...peopleEl.children].map(el=>({
-    name:el.querySelector('.pname-in').value.trim(),
-    y:+el.querySelector('.y').value, m:+el.querySelector('.m').value, d:+el.querySelector('.d').value
-  }));
+function load(){
+  let raw=null;
+  const m=document.cookie.match(/(?:^|; )doubutsu_family=([^;]*)/);
+  if(m){try{raw=JSON.parse(decodeURIComponent(m[1]));}catch(e){}}
+  if(!raw){try{const s=localStorage.getItem(CK); if(s) raw=JSON.parse(s);}catch(e){}}
+  if(!raw) return null;
+  if(Array.isArray(raw)) return {people:raw,mode:'animal'}; // 旧形式
+  return raw;
 }
 
-// 初期化：クッキーがあれば復元、なければ1人
-const saved=loadCookie();
-if(saved&&saved.length){ saved.forEach(makePerson); } else { makePerson(); }
+/* =========================================================
+   モード
+   ========================================================= */
+let curMode='animal', lastPeople=null;
+const bAnimal=document.getElementById('mAnimal'), bBazi=document.getElementById('mBazi');
+function setMode(mode){
+  curMode=mode;
+  bAnimal.classList.toggle('on',mode==='animal');
+  bBazi.classList.toggle('on',mode==='bazi');
+  document.getElementById('resTitle').textContent = mode==='animal'?'診断結果':'命式・鑑定結果';
+  document.getElementById('note').textContent = mode==='animal'
+    ? '※ 生年月日の干支（60日周期）にもとづく動物占い。最後に占った内容はこの端末に保存されます。'
+    : '※ 出生時刻を使わない三柱（年・月・日）の四柱推命。月柱・年柱は節気（立春など）で計算しています。';
+  if(lastPeople){ save({people:lastPeople,mode:curMode}); render(); }
+}
+bAnimal.onclick=()=>setMode('animal');
+bBazi.onclick=()=>setMode('bazi');
 
-document.getElementById('add').onclick=()=>{ makePerson(); peopleEl.lastChild.scrollIntoView({behavior:'smooth',block:'center'}); };
+/* =========================================================
+   描画
+   ========================================================= */
+function render(){ curMode==='animal'?renderAnimal():renderBazi(); }
 
-// ===== 占う =====
-document.getElementById('go').onclick=()=>{
-  const people=readPeople();
-  const err=document.getElementById('err');
-  if(people.some(p=>!(p.y&&p.m&&p.d))){err.style.display='block';return;}
-  err.style.display='none';
-  saveCookie(people); // 最後の入力を記憶
-
-  const rc=document.getElementById('rcards');
-  rc.innerHTML='';
-  people.forEach((p,i)=>{
-    const no=charNo(p.y,p.m,p.d), row=C[no-1];
-    const name=row[1], animal=row[2], summary=row[3], a=A[animal], g=G[a.g];
+function renderAnimal(){
+  const rc=document.getElementById('rcards'); rc.innerHTML='';
+  lastPeople.forEach((p,i)=>{
+    const no=charNo(p.y,p.m,p.d), row=C[no-1], name=row[1], animal=row[2], summary=row[3], a=A[animal], g=G[a.g];
     const who=p.name||('メンバー'+(i+1));
-    const card=document.createElement('div');
-    card.className='rcard';
+    const card=document.createElement('div'); card.className='rcard';
     card.innerHTML=`
       <div class="top" style="background:linear-gradient(135deg,${g.c1},${g.c2})">
         <div class="emoji">${a.e}</div>
@@ -303,15 +409,84 @@ document.getElementById('go').onclick=()=>{
     card.querySelector('.top').onclick=()=>card.classList.toggle('open');
     rc.appendChild(card);
   });
+  document.getElementById('extra').innerHTML=`
+    <div class="compat"><h4>👨‍👩‍👧‍👦 家族の相性診断</h4>
+      <div class="ph"><p>動物占いの相性は組み合わせデータの登録後に実装予定です。<br>いますぐ相性を見たい場合は「☯ 四柱推命」モードでご覧いただけます。</p><span class="soon">準備中</span></div>
+    </div>`;
+}
+
+function renderBazi(){
+  const rc=document.getElementById('rcards'); rc.innerHTML='';
+  const bs=lastPeople.map(p=>bazi(p.y,p.m,p.d));
+  lastPeople.forEach((p,i)=>{
+    const b=bs[i], who=p.name||('メンバー'+(i+1));
+    const dEl=stemElem(b.dsi), hcol=GCOL[dEl];
+    const per=PERSON[b.dsi];
+    // 通変星（年干・月干）
+    const De=stemElem(b.dsi),Dy=stemYang(b.dsi);
+    const gYear=tenGod(De,Dy,stemElem(b.ysi),stemYang(b.ysi));
+    const gMonth=tenGod(De,Dy,stemElem(b.msi),stemYang(b.msi));
+    const pil=(lbl,si,bi,god)=>`
+      <div class="pillar"><div class="plbl">${lbl}</div>
+        <div class="gan" style="color:${GCOL[stemElem(si)]}">${STEMS[si]}</div>
+        <div class="shi" style="color:${GCOL[brElem[bi]]}">${BR[bi]}</div>
+        <div class="god">${god}</div></div>`;
+    const cnt=gogyoCount(b), mx=Math.max(...cnt,1);
+    const bars=cnt.map((v,gi)=>`<div class="grow"><div class="gl" style="color:${GCOL[gi]}">${GNAME[gi]}</div><div class="bar"><i style="width:${Math.round(v/mx*100)}%;background:${GCOL[gi]}"></i></div><div class="gv">${v}</div></div>`).join('');
+    const card=document.createElement('div'); card.className='bcard';
+    card.innerHTML=`
+      <div class="btop" style="background:linear-gradient(135deg,${hcol},${shade(hcol)})">
+        <div class="bpname">${esc(who)}（${p.y}/${p.m}/${p.d}）</div>
+        <div class="bmain">日主：${per.n}</div>
+        <div class="bsub">${per.s}${b.py!==p.y?'　※立春前のため年柱は'+b.py+'年基準':''}</div>
+      </div>
+      <div class="binner">
+        <div class="meishiki">
+          ${pil('年柱',b.ysi,b.ybi,TG[gYear]?gYear+'／'+TG[gYear]:gYear)}
+          ${pil('月柱',b.msi,b.mbi,TG[gMonth]?gMonth+'／'+TG[gMonth]:gMonth)}
+          ${pil('日柱',b.dsi,b.dbi,'日主（自分）')}
+        </div>
+        <div class="gogyo"><div class="glab">五行バランス</div>${bars}</div>
+        <div class="perso"><div class="lbl">性格（日主）</div><p>${per.d}</p></div>
+      </div>`;
+    rc.appendChild(card);
+  });
+  // 家族の相性
+  let ex='';
+  if(lastPeople.length>=2){
+    let pairs='';
+    for(let i=0;i<lastPeople.length;i++) for(let j=i+1;j<lastPeople.length;j++){
+      const c=compat(bs[i],bs[j]);
+      const ni=lastPeople[i].name||('メンバー'+(i+1)), nj=lastPeople[j].name||('メンバー'+(j+1));
+      pairs+=`<div class="cpair"><div class="ch"><div class="names">${esc(ni)} × ${esc(nj)}</div><div class="lab" style="color:${c.col}">${c.label}</div></div><div class="cn">${c.note}</div></div>`;
+    }
+    ex=`<div class="compat"><h4>👨‍👩‍👧‍👦 家族の相性診断</h4>${pairs}</div>`;
+  }else{
+    ex=`<div class="compat"><h4>👨‍👩‍👧‍👦 家族の相性診断</h4><div class="ph"><p>2人以上を入力すると、五行の相生・相剋と干支の合・冲から相性を自動計算します。</p></div></div>`;
+  }
+  document.getElementById('extra').innerHTML=ex;
+}
+function shade(hex){const n=parseInt(hex.slice(1),16);let r=Math.max(0,(n>>16)-30),g=Math.max(0,((n>>8)&255)-30),b=Math.max(0,(n&255)-30);return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}
+
+/* =========================================================
+   初期化・イベント
+   ========================================================= */
+const saved=load();
+if(saved&&saved.people&&saved.people.length){ saved.people.forEach(makePerson); } else { makePerson(); }
+if(saved&&saved.mode==='bazi'){ curMode='bazi'; bAnimal.classList.remove('on'); bBazi.classList.add('on'); }
+
+document.getElementById('add').onclick=()=>{ makePerson(); peopleEl.lastChild.scrollIntoView({behavior:'smooth',block:'center'}); };
+document.getElementById('go').onclick=()=>{
+  const people=readPeople(), err=document.getElementById('err');
+  if(people.some(p=>!(p.y&&p.m&&p.d))){err.style.display='block';return;}
+  err.style.display='none';
+  lastPeople=people; save({people,mode:curMode});
+  setMode(curMode); // タイトル/note整合
+  render();
   document.getElementById('results').classList.add('show');
   document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
 };
-function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-
-document.getElementById('again').onclick=()=>{
-  document.getElementById('results').classList.remove('show');
-  window.scrollTo({top:0,behavior:'smooth'});
-};
+document.getElementById('again').onclick=()=>{ document.getElementById('results').classList.remove('show'); window.scrollTo({top:0,behavior:'smooth'}); };
 </script>
 </body>
 </html>
