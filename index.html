@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>動物占い | 60キャラクター診断</title>
+<title>動物占い | 家族まるごと60キャラクター診断</title>
 <style>
   :root{
     --bg1:#ffecd2; --bg2:#fcb69f; --card:#ffffff; --ink:#3a2e2a;
@@ -13,55 +13,74 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;
-    color:var(--ink);
-    background:linear-gradient(135deg,var(--bg1),var(--bg2));
-    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;
+    color:var(--ink);background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    min-height:100vh;display:flex;justify-content:center;padding:24px 14px 48px;
   }
-  .wrap{width:100%;max-width:520px}
+  .wrap{width:100%;max-width:560px}
   .card{background:var(--card);border-radius:26px;box-shadow:var(--shadow);overflow:hidden}
-  header{text-align:center;padding:34px 24px 26px;background:linear-gradient(135deg,#fff5ef,#ffe9df);border-bottom:1px solid var(--line)}
-  header .emoji{font-size:46px;line-height:1}
-  header h1{font-size:25px;margin:12px 0 6px;letter-spacing:.02em}
-  header p{color:var(--sub);font-size:13.5px;line-height:1.7}
-  .body{padding:26px 24px 30px}
-  label{display:block;font-size:13.5px;font-weight:700;margin-bottom:9px}
-  .date-row{display:flex;gap:10px}
+  header{text-align:center;padding:32px 24px 24px;background:linear-gradient(135deg,#fff5ef,#ffe9df);border-bottom:1px solid var(--line)}
+  header .emoji{font-size:44px;line-height:1}
+  header h1{font-size:23px;margin:12px 0 6px;letter-spacing:.02em}
+  header p{color:var(--sub);font-size:13px;line-height:1.7}
+  .body{padding:24px 22px 30px}
+
+  .people{display:flex;flex-direction:column;gap:14px}
+  .person{background:#fffaf6;border:1px solid var(--line);border-radius:18px;padding:14px 14px 16px;position:relative}
+  .person .row1{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+  .person .idx{width:26px;height:26px;flex:none;border-radius:50%;background:var(--accent);color:#fff;
+    font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .person input[type=text]{flex:1;padding:11px 12px;font-size:15px;border:1.5px solid var(--line);
+    border-radius:12px;background:#fff;color:var(--ink)}
+  .person input[type=text]:focus{outline:none;border-color:var(--accent2)}
+  .rm{flex:none;width:30px;height:30px;border:none;border-radius:50%;background:#f4e4da;color:#b08a78;
+    font-size:17px;font-weight:800;cursor:pointer;line-height:1}
+  .rm:hover{background:#efd5c7}
+  .date-row{display:flex;gap:8px}
   select{
-    flex:1;padding:13px 10px;font-size:15px;border:1.5px solid var(--line);border-radius:14px;
-    background:#fffaf7;color:var(--ink);appearance:none;-webkit-appearance:none;cursor:pointer;
+    flex:1;padding:11px 8px;font-size:14px;border:1.5px solid var(--line);border-radius:12px;
+    background:#fff;color:var(--ink);appearance:none;-webkit-appearance:none;cursor:pointer;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");
-    background-repeat:no-repeat;background-position:right 12px center;
+    background-repeat:no-repeat;background-position:right 10px center;
   }
   select:focus{outline:none;border-color:var(--accent2)}
-  .btn{
-    width:100%;margin-top:22px;padding:16px;border:none;border-radius:16px;font-size:16px;font-weight:800;
+  .add{margin-top:14px;width:100%;padding:13px;border:1.5px dashed #ffc4ad;border-radius:14px;background:#fff6f1;
+    color:var(--accent);font-size:14px;font-weight:800;cursor:pointer}
+  .add:hover{background:#fff0e8}
+  .btn{width:100%;margin-top:16px;padding:16px;border:none;border-radius:16px;font-size:16px;font-weight:800;
     color:#fff;cursor:pointer;letter-spacing:.06em;background:linear-gradient(135deg,var(--accent),var(--accent2));
-    box-shadow:0 10px 22px rgba(255,122,89,.38);transition:transform .12s,box-shadow .12s;
-  }
+    box-shadow:0 10px 22px rgba(255,122,89,.38);transition:transform .12s,box-shadow .12s}
   .btn:active{transform:translateY(2px);box-shadow:0 5px 12px rgba(255,122,89,.34)}
-  #result{margin-top:26px;display:none;animation:pop .5s ease}
-  @keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
-  .res-head{text-align:center;padding:26px 18px 22px;border-radius:22px;color:#fff;position:relative;overflow:hidden}
-  .res-head .an-emoji{font-size:74px;line-height:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.18))}
-  .res-head .an-num{font-size:12px;opacity:.92;margin-top:10px;letter-spacing:.14em}
-  .res-head .an-name{font-size:25px;font-weight:900;margin-top:5px;line-height:1.35;text-shadow:0 2px 6px rgba(0,0,0,.15)}
-  .res-head .an-animal{font-size:14px;margin-top:9px;opacity:.96;font-weight:700}
-  .group-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;background:rgba(255,255,255,.22);
-    border:1px solid rgba(255,255,255,.5);padding:6px 14px;border-radius:999px;font-size:13px;font-weight:800;backdrop-filter:blur(2px)}
-  .keywords{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0}
-  .keywords span{background:#fff3ec;color:var(--accent);font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:999px;border:1px solid #ffe0d3}
-  .section{margin-top:20px}
-  .section h3{font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:7px}
-  .section h3::before{content:"";width:6px;height:18px;border-radius:3px;background:linear-gradient(var(--accent),var(--accent2))}
-  .section p{font-size:14px;line-height:1.85;color:#5a4b44}
-  .facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
-  .fact{background:#fffaf6;border:1px solid var(--line);border-radius:16px;padding:14px}
-  .fact .k{font-size:11.5px;color:var(--sub);font-weight:700}
-  .fact .v{font-size:15px;font-weight:800;margin-top:4px}
-  .again{margin-top:20px;background:transparent;color:var(--accent);border:1.5px solid #ffd7c7;border-radius:14px;
+  .err{color:#d9534f;font-size:13px;margin-top:12px;text-align:center;display:none}
+
+  #results{margin-top:26px;display:none}
+  #results.show{display:block;animation:pop .5s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .res-title{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .res-title::before{content:"";width:6px;height:20px;border-radius:3px;background:linear-gradient(var(--accent),var(--accent2))}
+  .rcards{display:flex;flex-direction:column;gap:12px}
+  .rcard{border-radius:18px;overflow:hidden;box-shadow:0 6px 16px rgba(160,110,80,.14)}
+  .rcard .top{display:flex;align-items:center;gap:14px;padding:14px 16px;color:#fff;cursor:pointer}
+  .rcard .emoji{font-size:42px;line-height:1;filter:drop-shadow(0 3px 5px rgba(0,0,0,.18))}
+  .rcard .meta{flex:1;min-width:0}
+  .rcard .pname{font-size:13px;font-weight:700;opacity:.95}
+  .rcard .cname{font-size:17px;font-weight:900;line-height:1.3;margin-top:2px}
+  .rcard .sub{font-size:12px;opacity:.95;margin-top:4px;display:flex;flex-wrap:wrap;gap:6px}
+  .rcard .pill{background:rgba(255,255,255,.24);border:1px solid rgba(255,255,255,.45);padding:2px 8px;border-radius:999px;font-weight:700}
+  .rcard .chev{flex:none;opacity:.85;font-size:13px;transition:transform .2s}
+  .rcard.open .chev{transform:rotate(180deg)}
+  .rcard .detail{background:#fffaf6;padding:0 16px;max-height:0;overflow:hidden;transition:max-height .28s ease,padding .28s ease}
+  .rcard.open .detail{max-height:360px;padding:14px 16px 16px}
+  .rcard .detail p{font-size:13.5px;line-height:1.8;color:#5a4b44}
+  .rcard .detail .lbl{font-size:11.5px;font-weight:800;color:var(--sub);margin:10px 0 3px}
+
+  .compat{margin-top:22px;background:#fff6f1;border:1px dashed #ffc9b3;border-radius:18px;padding:18px 16px;text-align:center}
+  .compat h4{font-size:14px;margin-bottom:6px}
+  .compat p{font-size:12.5px;color:var(--sub);line-height:1.7}
+  .compat .soon{display:inline-block;margin-top:10px;background:#ffe0d3;color:var(--accent);font-size:11.5px;font-weight:800;padding:5px 13px;border-radius:999px}
+
+  .again{margin-top:18px;background:transparent;color:var(--accent);border:1.5px solid #ffd7c7;border-radius:14px;
     padding:13px;width:100%;font-weight:800;font-size:14px;cursor:pointer}
   .note{margin-top:18px;font-size:11px;color:var(--sub);text-align:center;line-height:1.7}
-  .err{color:#d9534f;font-size:13px;margin-top:12px;text-align:center;display:none}
 </style>
 </head>
 <body>
@@ -70,21 +89,27 @@
     <header>
       <div class="emoji">🐾</div>
       <h1>動物占い</h1>
-      <p>生年月日を入れるだけ。<br>60種類のキャラクターから、あなたの本当の姿を診断します。</p>
+      <p>家族みんなの生年月日を入れて、<br>全員の動物キャラを一度に診断しよう。</p>
     </header>
     <div class="body">
-      <label for="y">生年月日を選んでね</label>
-      <div class="date-row">
-        <select id="y" aria-label="年"></select>
-        <select id="m" aria-label="月"></select>
-        <select id="d" aria-label="日"></select>
+      <div class="people" id="people"></div>
+      <button class="add" id="add">＋ 人を追加</button>
+      <button class="btn" id="go">全員を占う 🔮</button>
+      <div class="err" id="err">日付が正しくありません。もう一度確認してください。</div>
+
+      <div id="results">
+        <div class="res-title">診断結果</div>
+        <div class="rcards" id="rcards"></div>
+        <div class="compat">
+          <h4>👨‍👩‍👧‍👦 家族の相性診断</h4>
+          <p>組み合わせごとの相性を表示する機能は、相性データの登録後に実装予定です。</p>
+          <span class="soon">準備中</span>
+        </div>
+        <button class="again" id="again">入力に戻る 🔄</button>
       </div>
-      <button class="btn" id="go">占う 🔮</button>
-      <div class="err" id="err">日付が正しくありません。もう一度選んでください。</div>
-      <div id="result"></div>
     </div>
   </div>
-  <p class="note">※ 生年月日の干支（60日周期）にもとづく、60キャラクターの動物占いです。</p>
+  <p class="note">※ 生年月日の干支（60日周期）にもとづく60キャラクターの動物占い。最後に占った内容はこの端末に保存されます。</p>
 </div>
 
 <script>
@@ -103,7 +128,6 @@ const A = {
   "ペガサス":{e:"🦄",g:"sun",  k:["自由","感性","天才肌"]},
   "ライオン":{e:"🦁",g:"sun",  k:["風格","責任感","カリスマ"]},
 };
-// ===== 3分類 =====
 const G = {
   sun:  {name:"太陽グループ", emoji:"☀️", c1:"#ff9a3c", c2:"#ff6f43",
          desc:"未来志向でポジティブ。「これからどうなりたいか」を原動力に、目標に向かって前向きに進むタイプです。"},
@@ -112,7 +136,6 @@ const G = {
   earth:{name:"地球グループ", emoji:"🌍", c1:"#4fae7b", c2:"#2f8f63",
          desc:"現実志向でマイペース。「自分がどうしたいか」を軸に、自分のペースを守って動くタイプです。"},
 };
-// ===== 60キャラクター（No.1-48はスプレッドシート由来、49-60は名簿から復元）=====
 const C = [
  [1,"長距離ランナーのチータ","チーター","目標に向かって粘り強く努力するタイプ。"],
  [2,"社交家のたぬき","たぬき","人懐っこく、周囲との調和を大切にする。"],
@@ -164,7 +187,7 @@ const C = [
  [48,"品格のあるチータ","チーター","上品で洗練されており、カリスマ性がある。"],
  [49,"ゆったりとした悠然の虎","虎","どっしりと構え、まわりを安心させる落ち着きの持ち主。"],
  [50,"落ち込みの激しい黒ひょう","黒ひょう","感受性が豊かで、気持ちの浮き沈みも人一倍のロマンチスト。"],
- [51,"我が道を行くライオン","ライオン","信念を貫き、自分の道を堂々と進む一匹狼ならぬ王者タイプ。"],
+ [51,"我が道を行くライオン","ライオン","信念を貫き、自分の道を堂々と進む王者タイプ。"],
  [52,"統率力のあるライオン","ライオン","場をまとめる力に長け、頼られるとますます輝くリーダー。"],
  [53,"感情豊かな黒ひょう","黒ひょう","喜怒哀楽がはっきりし、情に厚く表現力ゆたかなタイプ。"],
  [54,"楽天的な虎","虎","おおらかで前向き、細かいことは気にしない大黒柱タイプ。"],
@@ -177,54 +200,117 @@ const C = [
 ];
 
 // ===== 日付 → キャラナンバー(1-60) =====
-function toJDN(y,m,d){
-  const a=Math.floor((14-m)/12),y2=y+4800-a,m2=m+12*a-3;
-  return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;
-}
+function toJDN(y,m,d){const a=Math.floor((14-m)/12),y2=y+4800-a,m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
 function charNo(y,m,d){return (((toJDN(y,m,d)+49)%60)+60)%60+1;}
 
-// ===== セレクト初期化 =====
-const yS=document.getElementById('y'),mS=document.getElementById('m'),dS=document.getElementById('d');
-const nowY=new Date().getFullYear();
-for(let y=nowY;y>=1919;y--) yS.add(new Option(y+'年',y));
-for(let m=1;m<=12;m++) mS.add(new Option(m+'月',m));
-function fillDays(){
-  const y=+yS.value,m=+mS.value,keep=+dS.value,last=new Date(y,m,0).getDate();
-  dS.innerHTML='';
-  for(let d=1;d<=last;d++) dS.add(new Option(d+'日',d));
-  if(keep&&keep<=last) dS.value=keep;
+// ===== 保存（クッキー。file://等でクッキー不可のときはlocalStorageで代替）=====
+const CK="doubutsu_family";
+function saveCookie(list){
+  const v=encodeURIComponent(JSON.stringify(list));
+  try{document.cookie=CK+"="+v+";max-age="+(60*60*24*365)+";path=/;samesite=lax";}catch(e){}
+  try{localStorage.setItem(CK,JSON.stringify(list));}catch(e){}
 }
-yS.value=1995; mS.value=1; fillDays();
-yS.onchange=fillDays; mS.onchange=fillDays;
+function loadCookie(){
+  const m=document.cookie.match(/(?:^|; )doubutsu_family=([^;]*)/);
+  if(m){try{return JSON.parse(decodeURIComponent(m[1]));}catch(e){}}
+  try{const s=localStorage.getItem(CK); if(s) return JSON.parse(s);}catch(e){}
+  return null;
+}
+
+// ===== 人の入力行 =====
+const NOW=new Date().getFullYear();
+const peopleEl=document.getElementById('people');
+
+function makePerson(data){
+  data=data||{};
+  const el=document.createElement('div');
+  el.className='person';
+  el.innerHTML=`
+    <div class="row1">
+      <div class="idx"></div>
+      <input type="text" class="pname-in" placeholder="名前（任意）" maxlength="20">
+      <button class="rm" title="削除">×</button>
+    </div>
+    <div class="date-row">
+      <select class="y"></select><select class="m"></select><select class="d"></select>
+    </div>`;
+  const yS=el.querySelector('.y'),mS=el.querySelector('.m'),dS=el.querySelector('.d');
+  for(let y=NOW;y>=1919;y--) yS.add(new Option(y+'年',y));
+  for(let m=1;m<=12;m++) mS.add(new Option(m+'月',m));
+  function fillDays(keepVal){
+    const last=new Date(+yS.value,+mS.value,0).getDate();
+    dS.innerHTML='';
+    for(let d=1;d<=last;d++) dS.add(new Option(d+'日',d));
+    if(keepVal&&keepVal<=last) dS.value=keepVal;
+  }
+  yS.value=data.y||1990; mS.value=data.m||1; fillDays(data.d||1);
+  yS.onchange=()=>fillDays(+dS.value); mS.onchange=()=>fillDays(+dS.value);
+  if(data.name) el.querySelector('.pname-in').value=data.name;
+  el.querySelector('.rm').onclick=()=>{
+    if(peopleEl.children.length<=1) return; // 最低1人
+    el.remove(); renumber();
+  };
+  peopleEl.appendChild(el);
+  renumber();
+}
+function renumber(){
+  [...peopleEl.children].forEach((el,i)=>{ el.querySelector('.idx').textContent=i+1; });
+}
+function readPeople(){
+  return [...peopleEl.children].map(el=>({
+    name:el.querySelector('.pname-in').value.trim(),
+    y:+el.querySelector('.y').value, m:+el.querySelector('.m').value, d:+el.querySelector('.d').value
+  }));
+}
+
+// 初期化：クッキーがあれば復元、なければ1人
+const saved=loadCookie();
+if(saved&&saved.length){ saved.forEach(makePerson); } else { makePerson(); }
+
+document.getElementById('add').onclick=()=>{ makePerson(); peopleEl.lastChild.scrollIntoView({behavior:'smooth',block:'center'}); };
 
 // ===== 占う =====
 document.getElementById('go').onclick=()=>{
-  const y=+yS.value,m=+mS.value,d=+dS.value,err=document.getElementById('err');
-  if(!(y&&m&&d)){err.style.display='block';return;}
+  const people=readPeople();
+  const err=document.getElementById('err');
+  if(people.some(p=>!(p.y&&p.m&&p.d))){err.style.display='block';return;}
   err.style.display='none';
-  const no=charNo(y,m,d), row=C[no-1];
-  const name=row[1], animal=row[2], summary=row[3];
-  const a=A[animal], g=G[a.g];
-  const box=document.getElementById('result');
-  box.innerHTML=`
-    <div class="res-head" style="background:linear-gradient(135deg,${g.c1},${g.c2})">
-      <div class="an-emoji">${a.e}</div>
-      <div class="an-num">キャラNo.${no} / 60</div>
-      <div class="an-name">${name}</div>
-      <div class="an-animal">動物キャラ：${animal} ${a.e}</div>
-      <div class="group-badge">${g.emoji} ${g.name}</div>
-    </div>
-    <div class="keywords">${a.k.map(k=>`<span>#${k}</span>`).join('')}</div>
-    <div class="section"><h3>あなたのキャラクター</h3><p>${summary}</p></div>
-    <div class="section"><h3>${g.emoji} ${g.name}の傾向</h3><p>${g.desc}</p></div>
-    <div class="facts">
-      <div class="fact"><div class="k">動物キャラ</div><div class="v">${animal} ${a.e}</div></div>
-      <div class="fact"><div class="k">3分類</div><div class="v">${g.emoji} ${g.name.replace('グループ','')}</div></div>
-    </div>
-    <button class="again" id="again">もう一度占う 🔄</button>`;
-  box.style.display='block';
-  document.getElementById('again').onclick=()=>{box.style.display='none';window.scrollTo({top:0,behavior:'smooth'});};
-  box.scrollIntoView({behavior:'smooth',block:'center'});
+  saveCookie(people); // 最後の入力を記憶
+
+  const rc=document.getElementById('rcards');
+  rc.innerHTML='';
+  people.forEach((p,i)=>{
+    const no=charNo(p.y,p.m,p.d), row=C[no-1];
+    const name=row[1], animal=row[2], summary=row[3], a=A[animal], g=G[a.g];
+    const who=p.name||('メンバー'+(i+1));
+    const card=document.createElement('div');
+    card.className='rcard';
+    card.innerHTML=`
+      <div class="top" style="background:linear-gradient(135deg,${g.c1},${g.c2})">
+        <div class="emoji">${a.e}</div>
+        <div class="meta">
+          <div class="pname">${esc(who)}（${p.y}/${p.m}/${p.d}）</div>
+          <div class="cname">${name}</div>
+          <div class="sub"><span class="pill">キャラNo.${no}</span><span class="pill">${animal} ${a.e}</span><span class="pill">${g.emoji}${g.name.replace('グループ','')}</span></div>
+        </div>
+        <div class="chev">▾</div>
+      </div>
+      <div class="detail">
+        <div class="lbl">キャラクター</div><p>${summary}</p>
+        <div class="lbl">${g.emoji} ${g.name}の傾向</div><p>${g.desc}</p>
+        <div class="lbl">キーワード</div><p>${a.k.map(k=>'#'+k).join('　')}</p>
+      </div>`;
+    card.querySelector('.top').onclick=()=>card.classList.toggle('open');
+    rc.appendChild(card);
+  });
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+};
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+document.getElementById('again').onclick=()=>{
+  document.getElementById('results').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
 };
 </script>
 </body>
