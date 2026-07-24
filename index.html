@@ -57,9 +57,10 @@
   .res-title::before{content:"";width:6px;height:20px;border-radius:3px;background:linear-gradient(var(--accent),var(--accent2))}
   .rcards{display:grid;grid-template-columns:1fr;gap:12px;align-items:start}
 
-  /* 広いPC画面：結果を横に広げ、最大4人まで横並び */
+  /* 広いPC画面：結果を横に広げ、最大4人まで横並び（画面いっぱいまで拡大） */
   @media (min-width:900px){
-    .wrap{max-width:1200px}
+    body{padding-left:32px;padding-right:32px}
+    .wrap{max-width:none}
     .modes,.people,.add,.btn,.err{max-width:560px;margin-left:auto;margin-right:auto}
     .rcards{grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))}
     .res-title,.compat,.glossary,.again{max-width:760px;margin-left:auto;margin-right:auto}
