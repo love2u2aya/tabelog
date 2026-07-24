@@ -55,7 +55,15 @@
   @keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   .res-title{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
   .res-title::before{content:"";width:6px;height:20px;border-radius:3px;background:linear-gradient(var(--accent),var(--accent2))}
-  .rcards{display:flex;flex-direction:column;gap:12px}
+  .rcards{display:grid;grid-template-columns:1fr;gap:12px;align-items:start}
+
+  /* 広いPC画面：結果を横に広げ、最大4人まで横並び */
+  @media (min-width:900px){
+    .wrap{max-width:1200px}
+    .modes,.people,.add,.btn,.err{max-width:560px;margin-left:auto;margin-right:auto}
+    .rcards{grid-template-columns:repeat(var(--cols,1),minmax(0,1fr))}
+    .res-title,.compat,.glossary,.again{max-width:760px;margin-left:auto;margin-right:auto}
+  }
 
   /* animal cards */
   .rcard{border-radius:18px;overflow:hidden;box-shadow:0 6px 16px rgba(160,110,80,.14)}
@@ -459,7 +467,10 @@ bBazi.onclick=()=>setMode('bazi');
 /* =========================================================
    描画
    ========================================================= */
-function render(){ curMode==='animal'?renderAnimal():renderBazi(); }
+function render(){
+  document.getElementById('rcards').style.setProperty('--cols', Math.min(lastPeople.length,4));
+  curMode==='animal'?renderAnimal():renderBazi();
+}
 
 function renderAnimal(){
   const rc=document.getElementById('rcards'); rc.innerHTML='';
