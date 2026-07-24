@@ -44,9 +44,9 @@
     background-repeat:no-repeat;background-position:right 10px center;
   }
   select:focus{outline:none;border-color:var(--accent2)}
-  .add{margin-top:14px;width:100%;padding:13px;border:1.5px dashed #ffc4ad;border-radius:14px;background:#fff6f1;color:var(--accent);font-size:14px;font-weight:800;cursor:pointer}
+  .add{display:block;margin-top:14px;width:100%;padding:13px;border:1.5px dashed #ffc4ad;border-radius:14px;background:#fff6f1;color:var(--accent);font-size:14px;font-weight:800;cursor:pointer}
   .add:hover{background:#fff0e8}
-  .btn{width:100%;margin-top:16px;padding:16px;border:none;border-radius:16px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;letter-spacing:.06em;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 10px 22px rgba(255,122,89,.38);transition:transform .12s,box-shadow .12s}
+  .btn{display:block;width:100%;margin-top:16px;padding:16px;border:none;border-radius:16px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;letter-spacing:.06em;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 10px 22px rgba(255,122,89,.38);transition:transform .12s,box-shadow .12s}
   .btn:active{transform:translateY(2px);box-shadow:0 5px 12px rgba(255,122,89,.34)}
   .err{color:#d9534f;font-size:13px;margin-top:12px;text-align:center;display:none}
 
@@ -162,7 +162,7 @@
   .tolink{margin-top:14px;display:inline-block;padding:12px 18px;border:none;border-radius:13px;font-size:14px;font-weight:800;color:#fff;cursor:pointer;background:linear-gradient(135deg,#6d78c9,#4b56a8);box-shadow:0 8px 18px rgba(75,86,168,.32);transition:transform .12s}
   .tolink:active{transform:translateY(2px)}
 
-  .again{margin-top:18px;background:transparent;color:var(--accent);border:1.5px solid #ffd7c7;border-radius:14px;padding:13px;width:100%;font-weight:800;font-size:14px;cursor:pointer}
+  .again{display:block;margin-top:18px;background:transparent;color:var(--accent);border:1.5px solid #ffd7c7;border-radius:14px;padding:13px;width:100%;font-weight:800;font-size:14px;cursor:pointer}
   .note{margin-top:18px;font-size:11px;color:var(--sub);text-align:center;line-height:1.7}
 </style>
 </head>
@@ -486,7 +486,7 @@ function setMode(mode){
   document.getElementById('resTitle').textContent = mode==='animal'?'診断結果':'命式・鑑定結果';
   document.getElementById('note').textContent = mode==='animal'
     ? '※ 生年月日の干支（60日周期）にもとづく動物占い。最後に占った内容はこの端末に保存されます。'
-    : '※ 出生時刻を使わない三柱（年・月・日）の四柱推命。月柱・年柱は節気（立春など）で計算しています。';
+    : '※ 四柱推命。出生時刻を入れると時柱（4本目の柱）まで算出します（未入力なら年・月・日の三柱）。月柱・年柱は節気（立春など）で計算しています。';
   if(lastPeople){ save({people:lastPeople,mode:curMode}); render(); }
 }
 bAnimal.onclick=()=>setMode('animal');
