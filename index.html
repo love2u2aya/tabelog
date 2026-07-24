@@ -486,7 +486,7 @@ function setMode(mode){
   document.getElementById('resTitle').textContent = mode==='animal'?'診断結果':'命式・鑑定結果';
   document.getElementById('note').textContent = mode==='animal'
     ? '※ 生年月日の干支（60日周期）にもとづく動物占い。最後に占った内容はこの端末に保存されます。'
-    : '※ 出生時刻を使わない三柱（年・月・日）の四柱推命。月柱・年柱は節気（立春など）で計算しています。';
+    : '※ 四柱推命。出生時刻を入れると時柱（4本目の柱）まで算出します（未入力なら年・月・日の三柱）。月柱・年柱は節気（立春など）で計算しています。';
   if(lastPeople){ save({people:lastPeople,mode:curMode}); render(); }
 }
 bAnimal.onclick=()=>setMode('animal');
