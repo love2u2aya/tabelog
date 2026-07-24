@@ -104,6 +104,10 @@
   .gsec p{font-size:12.5px;line-height:1.7;color:#5a4b44}
   .gsec ul{margin:6px 0 0;padding-left:18px}
   .gsec li{font-size:12.5px;line-height:1.8;color:#5a4b44}
+  .summary{background:linear-gradient(135deg,#fff3ec,#fff8f2);border:1px solid #ffe0d3;border-radius:14px;padding:13px 15px;margin-bottom:16px}
+  .summary .lbl{font-size:12px;font-weight:800;color:var(--accent);margin-bottom:5px}
+  .summary p{font-size:13.5px;line-height:1.85;color:#4a3d37}
+  .dunow{margin-top:10px;background:#fff1e9;border:1px solid #ffd7c7;border-radius:12px;padding:11px 13px;font-size:12.5px;line-height:1.7;color:#5a4b44}
   .perso{margin-top:14px}
   .perso .lbl,.daiun .lbl{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:3px}
   .perso p{font-size:13.5px;line-height:1.8;color:#5a4b44}
@@ -269,6 +273,8 @@ const GNAME=['木','火','土','金','水'];
 const GCOL=['#3fa76b','#ef6b53','#d9a441','#9aa0a8','#5a8fd6'];
 const GMEAN=['成長・やさしさ・伸びる力','情熱・華やかさ・表現力','安定・信頼・つつむ力','意志・決断・美意識','知性・柔軟・交流'];
 const JUUNIMEAN={'長生':'誕生・スタートの初々しさ','沐浴':'不安定・迷いと感受性','冠帯':'自立へ向かう成長期','建禄':'充実・独り立ちの安定','帝旺':'最盛・エネルギーの頂点','衰':'落ち着き・成熟','病':'繊細・内省と気づかい','死':'静けさ・思索と集中','墓':'蓄積・保守と粘り','絶':'転機・ゼロからの再出発','胎':'芽生え・準備と可能性','養':'育まれる・のんびり吸収'};
+// 大運（各10年）のテーマ：その期の天干を日主から見た通変星で読む
+const DAIUN_THEME={'比肩':'自立と自分らしさを固める時期。マイペースに基盤づくりを。','劫財':'人との関わりや勝負ごとが増える、活動的な時期。','食神':'楽しみ・表現・衣食が充実する、のびのび開花の時期。','傷官':'才能や感性が際立つ時期。こだわりが結果を生みます。','偏財':'人脈やお金が動く、フットワークの軽い発展期。','正財':'コツコツ堅実に築く、安定と信用の時期。','偏官':'挑戦・責任・勝負の時期。困難を越えて力がつきます。','正官':'立場・信頼・けじめがテーマ。社会的に整う時期。','偏印':'学び直しや新分野への好奇心が広がる転換期。','印綬':'学び・知性・周囲の支えが活きる、充電と成長の時期。'};
 const stemElem=i=>Math.floor(i/2), stemYang=i=>i%2===0;
 const PERSON=[
  {n:'甲（きのえ）',s:'木・大樹',d:'まっすぐで向上心が強く、面倒見のよいリーダー気質。曲がったことが嫌いで、コツコツ上へ伸びていく大樹のような人。'},
@@ -527,10 +533,23 @@ function renderBazi(){
     const male=(p.sex||'M')==='M';
     const du=daiun(p.y,p.m,p.d,b.ysi,b.msi,b.mbi,male);
     const age=ry-p.y; // 現在のおおよその満年齢
+    let curDu=null;
     const duCells=du.list.map(x=>{
       const end=x.age+9, now=(age>=x.age&&age<=end);
+      if(now) curDu={x,end,god:tg(x.si)};
       return `<div class="ducell${now?' now':''}"><div class="da">${x.age}〜${end}歳</div><div class="dg" style="color:${GCOL[stemElem(x.si)]}">${STEMS[x.si]}${BR[x.bi]}</div><div class="dt">${tg(x.si)}</div>${now?'<div class="nowb">今ここ</div>':''}</div>`;
     }).join('');
+    // 今の大運の意味コメント
+    let duNow='';
+    if(curDu){
+      duNow=`<div class="dunow">▶ 今の大運（${curDu.x.age}〜${curDu.end}歳・${STEMS[curDu.x.si]}${BR[curDu.x.bi]}／<b>${curDu.god}</b>）：${DAIUN_THEME[curDu.god]}</div>`;
+    }else if(age<du.startAge){
+      duNow=`<div class="dunow">▶ 大運入りは${du.startAge}歳から。それまでは月柱（${b.month}）の影響が中心の時期です。</div>`;
+    }
+    // 総合コメント（日主・五行の偏り・身強弱・月柱の通変星）
+    let dom=0; cnt.forEach((v,gi)=>{if(v>cnt[dom])dom=gi;});
+    const monthGod=tg(b.msi);
+    const summary=`${esc(who)}さんの軸は<b>日主「${per.n}」</b>。${per.d} 五行では<b>${GNAME[dom]}（${GMEAN[dom]}）</b>が最も強く、日主の強さは<b>${st.label}</b>で${st.desc} 社会性を表す月柱の通変星は<b>${monthGod}（${TG[monthGod]}）</b>です。`;
     const no=charNo(p.y,p.m,p.d), arow=C[no-1], aInfo=A[arow[2]];
     const timeNote=b.hour===undefined?'　※時刻未入力のため三柱':'';
     const card=document.createElement('div'); card.className='bcard';
@@ -541,6 +560,7 @@ function renderBazi(){
         <div class="bsub">${per.s}${b.py!==p.y?'　※立春前のため年柱は'+b.py+'年基準':''}${timeNote}</div>
       </div>
       <div class="binner">
+        <div class="summary"><div class="lbl">🔮 総合コメント</div><p>${summary}</p></div>
         <div class="meishiki">${pillars}</div>
         <div class="tags">
           <span class="tag" style="border-color:${st.label==='身強'?'#e08a3c':'#5a8fd6'};color:${st.label==='身強'?'#c96a1f':'#3f6fb0'}">${st.label}</span>
@@ -550,8 +570,8 @@ function renderBazi(){
         <div class="gogyo"><div class="glab">五行バランス（蔵干含む）</div>${bars}</div>
         <div class="perso"><div class="lbl">性格（日主）</div><p>${per.d}</p></div>
         <div class="perso"><div class="lbl">身強・身弱</div><p><b>${st.label}</b>：${st.desc}</p></div>
-        <div class="daiun"><div class="lbl">大運（10年ごとの運の流れ・${du.forward?'順行':'逆行'}／${du.startAge}歳スタート）</div>
-          <div class="durow">${duCells}</div></div>
+        <div class="daiun"><div class="lbl">大運（だいうん）＝10年ごとに巡る運の流れ・${du.forward?'順行':'逆行'}／${du.startAge}歳スタート</div>
+          <div class="durow">${duCells}</div>${duNow}</div>
         <div class="perso"><div class="lbl">動物占いとの対応</div><p>日柱「${b.day}」は、動物占いの <b>No.${no} ${arow[1]} ${aInfo.e}</b> に対応します。「🐾 動物占い」モードで詳しく見られます。</p></div>
       </div>`;
     rc.appendChild(card);
