@@ -133,6 +133,11 @@
   .summary .lbl{font-size:12px;font-weight:800;color:var(--accent);margin-bottom:5px}
   .summary p{font-size:13.5px;line-height:1.85;color:#4a3d37}
   .dunow{margin-top:10px;background:#fff1e9;border:1px solid #ffd7c7;border-radius:12px;padding:11px 13px;font-size:12.5px;line-height:1.7;color:#5a4b44}
+  .words{margin-bottom:16px;background:#f4f7ff;border:1px solid #e2e8fb;border-radius:14px;padding:13px 15px}
+  .words .lbl{font-size:12px;font-weight:800;color:#4b56a8;margin-bottom:8px}
+  .wchips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+  .wchips span{background:#fff;border:1px solid #d7def5;color:#4b56a8;font-size:12.5px;font-weight:700;padding:5px 12px;border-radius:999px}
+  .phrase{font-size:14px;font-weight:800;color:#3a2e2a;line-height:1.65}
   .perso{margin-top:14px}
   .perso .lbl,.daiun .lbl{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:3px}
   .perso p{font-size:13.5px;line-height:1.8;color:#5a4b44}
@@ -312,6 +317,44 @@ const TERMTIP={
   '身弱':'身弱（みじゃく）：日主を支える五行が少なめ。周囲と協調し環境を活かすと伸びるタイプ。'
 };
 const dt=(t)=>t?` data-tip="${esc(t)}"`:'';
+// 響く言葉（ルールベース）
+const ELEMENT_WORDS=[
+  ['成長','挑戦','未来','自然','スタート','向上','まっすぐ','開拓'], // 木
+  ['情熱','輝き','表現','華やか','スピード','ひらめき','太陽','魅せる'], // 火
+  ['安心','信頼','積み重ね','家族','安定','育てる','誠実','ぬくもり'], // 土
+  ['本物','洗練','美しさ','こだわり','品格','磨く','決断','凛と'], // 金
+  ['知性','自由','柔軟','流れ','ロマン','奥行き','旅','対話'], // 水
+];
+const TSU_WORDS=[
+  ['自分らしさ','仲間','マイペース','独立'],   // 比劫
+  ['楽しむ','遊び心','クリエイティブ','おもしろい'], // 食傷
+  ['豊かさ','実り','ご縁','手ごたえ'],         // 財
+  ['責任','使命','格','やり遂げる'],           // 官殺
+  ['学び','深める','支え','静けさ'],           // 印
+];
+const STRONGW=['自分の意志','切り拓く'], WEAKW=['支え合い','調和'];
+const PHRASE=[
+  ['まっすぐ進めば、道は拓ける。','伸びやかに、自分の花を咲かせて。','一歩ずつが、大きな実りになる。','まっすぐな志が、信頼を育てる。','学びが、あなたを高く伸ばす。'], // 木
+  ['あなたの輝きで、場を照らして。','楽しむ心が、いちばん人を惹きつける。','情熱は、ちゃんと形になる。','熱意が、まわりの信頼を集める。','感性を磨くほど、光は強くなる。'], // 火
+  ['ぶれない土台が、あなたの強さ。','安心できる場所から、面白いことが生まれる。','積み重ねは、確かな豊かさになる。','誠実さが、いちばんの信用。','まわりを育てるあなたが、育てられる。'], // 土
+  ['筋を通す姿が、あなたらしい。','こだわりが、美しい表現になる。','本物だけが、長く残る。','品格が、信頼を連れてくる。','磨いた知性が、静かに光る。'], // 金
+  ['自由な発想が、あなたの武器。','流れに乗るほど、面白くなる。','柔らかさが、ご縁を運ぶ。','知性と誠実さで、深く信頼される。','学びと対話が、世界を広げる。'], // 水
+];
+function tsuGroup(De,Oe){ if(Oe===De)return 0; if(Oe===(De+1)%5)return 1; if(Oe===(De+2)%5)return 2; if(Oe===(De+3)%5)return 3; return 4; }
+function likedWords(b){
+  const De=stemElem(b.dsi);
+  const g=[0,0,0,0,0];
+  b.stems.forEach((s,idx)=>{ if(idx===2)return; g[tsuGroup(De,stemElem(s))]++; }); // 日干は除く
+  b.branches.forEach(br=>ZOKAN[br].forEach(z=>{ g[tsuGroup(De,stemElem(z))]++; }));
+  let dg=0; g.forEach((v,i)=>{ if(v>g[dg])dg=i; });
+  const cnt=gogyoCount(b);
+  let e1=0; cnt.forEach((v,i)=>{ if(v>cnt[e1])e1=i; });
+  let e2=-1; cnt.forEach((v,i)=>{ if(i!==e1 && (e2<0||v>cnt[e2]))e2=i; });
+  const st=strength(b.dsi,cnt);
+  const words=[]; const add=(arr,n)=>{ for(let i=0;i<n&&i<arr.length;i++) if(!words.includes(arr[i])) words.push(arr[i]); };
+  add(ELEMENT_WORDS[e1],4); add(TSU_WORDS[dg],3); add(ELEMENT_WORDS[e2],2); add(st.label==='身強'?STRONGW:WEAKW,1);
+  return {words:words.slice(0,9), phrase:PHRASE[De][dg]};
+}
 const PERSON=[
  {n:'甲（きのえ）',s:'木・大樹',d:'まっすぐで向上心が強く、面倒見のよいリーダー気質。曲がったことが嫌いで、コツコツ上へ伸びていく大樹のような人。'},
  {n:'乙（きのと）',s:'木・草花',d:'柔軟で協調性があり、しなやかに環境へ適応する粘り強さの持ち主。周囲と和みながら着実に伸びる人。'},
@@ -593,6 +636,7 @@ function renderBazi(){
     let dom=0; cnt.forEach((v,gi)=>{if(v>cnt[dom])dom=gi;});
     const monthGod=tg(b.msi);
     const summary=`${esc(who)}さんの軸は<b>日主「${per.n}」</b>。${per.d} 五行では<b>${GNAME[dom]}（${GMEAN[dom]}）</b>が最も強く、日主の強さは<b>${st.label}</b>で${st.desc} 社会性を表す月柱の通変星は<b>${monthGod}（${TG[monthGod]}）</b>です。`;
+    const lw=likedWords(b);
     const no=charNo(p.y,p.m,p.d), arow=C[no-1], aInfo=A[arow[2]];
     const timeNote=b.hour===undefined?'　※時刻未入力のため三柱':'';
     const card=document.createElement('div'); card.className='bcard';
@@ -604,6 +648,10 @@ function renderBazi(){
       </div>
       <div class="binner">
         <div class="summary"><div class="lbl">🔮 総合コメント</div><p>${summary}</p></div>
+        <div class="words"><div class="lbl">🗝️ 響きそうな言葉</div>
+          <div class="wchips">${lw.words.map(w=>`<span>${w}</span>`).join('')}</div>
+          <div class="phrase">「${lw.phrase}」</div>
+        </div>
         <div class="meishiki">${pillars}</div>
         <div class="tags">
           <span class="tag" style="border-color:${st.label==='身強'?'#e08a3c':'#5a8fd6'};color:${st.label==='身強'?'#c96a1f':'#3f6fb0'}"${dt(TERMTIP[st.label])}>${st.label}</span>
