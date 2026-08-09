@@ -187,6 +187,7 @@
 
       <div class="people" id="people"></div>
       <button class="add" id="add">＋ 人を追加</button>
+      <button class="add" id="randomPair">🎲 家族から2人ランダムで相性診断</button>
       <button class="btn" id="go">全員を占う 🔮</button>
       <div class="err" id="err">日付が正しくありません。もう一度確認してください。</div>
 
@@ -462,6 +463,48 @@ function compat(ba,bb){
 }
 
 /* =========================================================
+   家族データ（ふりがな・生年月日・性別のみ／五十音順）
+   ========================================================= */
+const FAMILY=[
+ {n:'あい',y:1975,m:4,d:30,sex:'F'},
+ {n:'あいが',y:2016,m:7,d:31,sex:'M'},
+ {n:'あすか',y:1982,m:3,d:6,sex:'F'},
+ {n:'あや',y:1973,m:9,d:14,sex:'M'},
+ {n:'あゆな',y:2007,m:7,d:26,sex:'F'},
+ {n:'えみこ',y:1950,m:2,d:27,sex:'F'},
+ {n:'おと',y:2009,m:1,d:18,sex:'M'},
+ {n:'かよこ',y:1981,m:2,d:13,sex:'F'},
+ {n:'きぬえ',y:1926,m:11,d:26,sex:'F'},
+ {n:'こういち',y:1975,m:2,d:16,sex:'M'},
+ {n:'こうしろう',y:1988,m:1,d:6,sex:'M'},
+ {n:'さぶろう',y:1919,m:3,d:5,sex:'M'},
+ {n:'しほ',y:1976,m:6,d:25,sex:'F'},
+ {n:'しょうご',y:2008,m:12,d:20,sex:'M'},
+ {n:'じゅんこ',y:1947,m:7,d:11,sex:'F'},
+ {n:'せな',y:2011,m:12,d:23,sex:'F'},
+ {n:'たつのり',y:1976,m:8,d:31,sex:'M'},
+ {n:'ちえ',y:1979,m:4,d:13,sex:'F'},
+ {n:'ちなみ',y:1980,m:12,d:1,sex:'F'},
+ {n:'としやす',y:1949,m:11,d:23,sex:'M'},
+ {n:'のぶひで',y:1952,m:10,d:18,sex:'M'},
+ {n:'のりあき',y:1947,m:9,d:7,sex:'M'},
+ {n:'ひなの',y:2011,m:12,d:26,sex:'F'},
+ {n:'ひろやす',y:1974,m:8,d:31,sex:'M'},
+ {n:'ひゅうま',y:2007,m:6,d:11,sex:'M'},
+ {n:'まな',y:2011,m:2,d:8,sex:'F'},
+ {n:'みちよ',y:1956,m:7,d:8,sex:'F'},
+ {n:'みらく',y:2013,m:4,d:13,sex:'M'},
+ {n:'ゆき',y:1985,m:10,d:12,sex:'F'},
+ {n:'ようこ',y:1971,m:7,d:23,sex:'F'},
+ {n:'りくと',y:2005,m:4,d:27,sex:'M'},
+ {n:'りこ',y:2009,m:11,d:15,sex:'F'},
+ {n:'りんの',y:2016,m:11,d:25,sex:'F'},
+ {n:'れおな',y:2006,m:11,d:19,sex:'M'},
+ {n:'れんと',y:2015,m:4,d:23,sex:'M'},
+ {n:'るい',y:2009,m:11,d:11,sex:'M'},
+];
+
+/* =========================================================
    共通：人の入力
    ========================================================= */
 const NOW=new Date().getFullYear();
@@ -476,23 +519,44 @@ function makePerson(data){
       <input type="text" class="pname-in" placeholder="名前（任意）" maxlength="20">
       <button class="rm" title="削除">×</button>
     </div>
+    <div class="date-row" style="margin-top:8px"><select class="fam"></select></div>
     <div class="date-row"><select class="y"></select><select class="m"></select><select class="d"></select></div>
     <div class="date-row" style="margin-top:8px"><select class="sex"></select><select class="hh"></select></div>`;
   const yS=el.querySelector('.y'),mS=el.querySelector('.m'),dS=el.querySelector('.d');
-  const sexS=el.querySelector('.sex'),hhS=el.querySelector('.hh');
+  const sexS=el.querySelector('.sex'),hhS=el.querySelector('.hh'),famS=el.querySelector('.fam');
   for(let y=NOW;y>=1919;y--) yS.add(new Option(y+'年',y));
   for(let mo=1;mo<=12;mo++) mS.add(new Option(mo+'月',mo));
   sexS.add(new Option('♂ 男性','M')); sexS.add(new Option('♀ 女性','F'));
   hhS.add(new Option('時刻：不明',''));
   for(let h=0;h<24;h++) hhS.add(new Option(h+'時台',h));
+  famS.add(new Option('👪 家族から選ぶ（任意）',''));
+  FAMILY.forEach((f,i)=>famS.add(new Option(f.n,String(i))));
   function fillDays(keep){const last=new Date(+yS.value,+mS.value,0).getDate();dS.innerHTML='';for(let d=1;d<=last;d++)dS.add(new Option(d+'日',d));if(keep&&keep<=last)dS.value=keep;}
   yS.value=data.y||1990; mS.value=data.m||1; fillDays(data.d||1);
   sexS.value=data.sex||'M';
   hhS.value=(data.hh===0||data.hh)?String(data.hh):'';
   yS.onchange=()=>fillDays(+dS.value); mS.onchange=()=>fillDays(+dS.value);
   if(data.name) el.querySelector('.pname-in').value=data.name;
+  famS.onchange=()=>{
+    if(famS.value==='') return;
+    const f=FAMILY[+famS.value];
+    el.querySelector('.pname-in').value=f.n;
+    yS.value=f.y; mS.value=f.m; fillDays(f.d); sexS.value=f.sex;
+    famS.value='';
+  };
   el.querySelector('.rm').onclick=()=>{ if(peopleEl.children.length<=1)return; el.remove(); renumber(); };
   peopleEl.appendChild(el); renumber();
+}
+function fillPersonAt(idx,f){
+  while(peopleEl.children.length<=idx) makePerson();
+  const el=peopleEl.children[idx];
+  el.querySelector('.pname-in').value=f.n;
+  el.querySelector('.y').value=f.y;
+  el.querySelector('.m').value=f.m;
+  const dS=el.querySelector('.d'), last=new Date(f.y,f.m,0).getDate();
+  dS.innerHTML=''; for(let d=1;d<=last;d++) dS.add(new Option(d+'日',d));
+  dS.value=f.d;
+  el.querySelector('.sex').value=f.sex;
 }
 function renumber(){[...peopleEl.children].forEach((el,i)=>el.querySelector('.idx').textContent=i+1);}
 function readPeople(){return [...peopleEl.children].map(el=>{const hv=el.querySelector('.hh').value;return{name:el.querySelector('.pname-in').value.trim(),y:+el.querySelector('.y').value,m:+el.querySelector('.m').value,d:+el.querySelector('.d').value,sex:el.querySelector('.sex').value,hh:hv===''?null:+hv};});}
@@ -712,7 +776,7 @@ if(saved&&saved.people&&saved.people.length){ saved.people.forEach(makePerson); 
 if(saved&&saved.mode==='bazi'){ curMode='bazi'; bAnimal.classList.remove('on'); bBazi.classList.add('on'); }
 
 document.getElementById('add').onclick=()=>{ makePerson(); peopleEl.lastChild.scrollIntoView({behavior:'smooth',block:'center'}); };
-document.getElementById('go').onclick=()=>{
+function runDiagnosis(){
   const people=readPeople(), err=document.getElementById('err');
   if(people.some(p=>!(p.y&&p.m&&p.d))){err.style.display='block';return;}
   err.style.display='none';
@@ -721,8 +785,23 @@ document.getElementById('go').onclick=()=>{
   render();
   document.getElementById('results').classList.add('show');
   document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
-};
+}
+document.getElementById('go').onclick=runDiagnosis;
 document.getElementById('again').onclick=()=>{ document.getElementById('results').classList.remove('show'); window.scrollTo({top:0,behavior:'smooth'}); };
+
+document.getElementById('randomPair').onclick=()=>{
+  // 家族から重複なく2人ランダムに選び、四柱推命モードで相性まで自動診断
+  const idx=[...FAMILY.keys()];
+  const i1=idx.splice(Math.floor(Math.random()*idx.length),1)[0];
+  const i2=idx.splice(Math.floor(Math.random()*idx.length),1)[0];
+  while(peopleEl.children.length>1) peopleEl.lastChild.remove();
+  if(peopleEl.children.length<1) makePerson();
+  fillPersonAt(0,FAMILY[i1]);
+  fillPersonAt(1,FAMILY[i2]);
+  renumber();
+  curMode='bazi'; bAnimal.classList.remove('on'); bBazi.classList.add('on');
+  runDiagnosis();
+};
 
 /* 用語ツールチップ（カーソルから少し離して表示） */
 (function(){
