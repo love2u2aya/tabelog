@@ -45,6 +45,8 @@
   }
   select:focus{outline:none;border-color:var(--accent2)}
   .add{display:block;margin-top:14px;width:100%;padding:13px;border:1.5px dashed #ffc4ad;border-radius:14px;background:#fff6f1;color:var(--accent);font-size:14px;font-weight:800;cursor:pointer}
+  .dice-row{display:flex;gap:10px}
+  .dice-row .dice{flex:1;font-size:13px;padding:13px 6px}
   .add:hover{background:#fff0e8}
   .btn{display:block;width:100%;margin-top:16px;padding:16px;border:none;border-radius:16px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;letter-spacing:.06em;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 10px 22px rgba(255,122,89,.38);transition:transform .12s,box-shadow .12s}
   .btn:active{transform:translateY(2px);box-shadow:0 5px 12px rgba(255,122,89,.34)}
@@ -187,7 +189,10 @@
 
       <div class="people" id="people"></div>
       <button class="add" id="add">＋ 人を追加</button>
-      <button class="add" id="randomPair">🎲 家族から2人ランダムで相性診断</button>
+      <div class="dice-row">
+        <button class="add dice" id="randomPair2">🎲 2人ランダム相性</button>
+        <button class="add dice" id="randomPair4">🎲 4人ランダム相性</button>
+      </div>
       <button class="btn" id="go">全員を占う 🔮</button>
       <div class="err" id="err">日付が正しくありません。もう一度確認してください。</div>
 
@@ -789,19 +794,20 @@ function runDiagnosis(){
 document.getElementById('go').onclick=runDiagnosis;
 document.getElementById('again').onclick=()=>{ document.getElementById('results').classList.remove('show'); window.scrollTo({top:0,behavior:'smooth'}); };
 
-document.getElementById('randomPair').onclick=()=>{
-  // 家族から重複なく2人ランダムに選び、四柱推命モードで相性まで自動診断
+function randomFamilyDiagnosis(n){
+  // 家族から重複なくn人ランダムに選び、四柱推命モードで相性まで自動診断
   const idx=[...FAMILY.keys()];
-  const i1=idx.splice(Math.floor(Math.random()*idx.length),1)[0];
-  const i2=idx.splice(Math.floor(Math.random()*idx.length),1)[0];
+  const picks=[];
+  for(let i=0;i<n && idx.length;i++) picks.push(FAMILY[idx.splice(Math.floor(Math.random()*idx.length),1)[0]]);
   while(peopleEl.children.length>1) peopleEl.lastChild.remove();
   if(peopleEl.children.length<1) makePerson();
-  fillPersonAt(0,FAMILY[i1]);
-  fillPersonAt(1,FAMILY[i2]);
+  picks.forEach((f,i)=>fillPersonAt(i,f));
   renumber();
   curMode='bazi'; bAnimal.classList.remove('on'); bBazi.classList.add('on');
   runDiagnosis();
-};
+}
+document.getElementById('randomPair2').onclick=()=>randomFamilyDiagnosis(2);
+document.getElementById('randomPair4').onclick=()=>randomFamilyDiagnosis(4);
 
 /* 用語ツールチップ（カーソルから少し離して表示） */
 (function(){
